@@ -1,47 +1,52 @@
-'use client';
+"use client";
 
-import { useWallet } from '@lazorkit/wallet';
-import { SystemProgram, PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { useState } from 'react';
+import { useWallet } from "@lazorkit/wallet";
+import { SystemProgram, PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { useState } from "react";
+import { Card } from "@/components/ui/Card";
+import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 
 /**
  * TransferForm Component
- * 
  * Demonstrates how to send gasless transactions with Lazorkit.
- * 
- * Key features:
- * 1. Create a Solana instruction (SystemProgram.transfer)
- * 2. Sign and send using signAndSendTransaction
- * 3. Optional: Pay gas fees in USDC instead of SOL
- * 
- * The Paymaster handles gas sponsorship, so users don't need SOL for fees.
  */
 export function TransferForm() {
-  const { signAndSendTransaction, smartWalletPubkey, isConnected } = useWallet();
-  const [recipient, setRecipient] = useState('');
-  const [amount, setAmount] = useState('');
+  const { signAndSendTransaction, smartWalletPubkey, isConnected } =
+    useWallet();
+  const [recipient, setRecipient] = useState("");
+  const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
-  const [txSignature, setTxSignature] = useState('');
-  const [error, setError] = useState('');
+  const [txSignature, setTxSignature] = useState("");
+  const [error, setError] = useState("");
 
   const handleTransfer = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!smartWalletPubkey) {
-      setError('Wallet not connected');
+      setError("Wallet not connected");
       return;
     }
 
     setLoading(true);
-    setError('');
-    setTxSignature('');
+    setError("");
+    setTxSignature("");
 
     try {
       // Validate recipient address
-      const recipientPubkey = new PublicKey(recipient);
+      let recipientPubkey;
+      try {
+        recipientPubkey = new PublicKey(recipient);
+      } catch {
+        throw new Error("Invalid recipient address");
+      }
 
       // Convert SOL amount to lamports
       const lamports = parseFloat(amount) * LAMPORTS_PER_SOL;
+      if (isNaN(lamports) || lamports <= 0) {
+        throw new Error("Invalid amount");
+      }
 
       // Create transfer instruction
       const instruction = SystemProgram.transfer({
@@ -50,22 +55,17 @@ export function TransferForm() {
         lamports,
       });
 
-      // Sign and send transaction
-      // The Paymaster will sponsor the gas fees
+      // Sign and send transaction (Sponsored by Paymaster)
       const signature = await signAndSendTransaction({
         instructions: [instruction],
-        transactionOptions: {
-          // Optional: Pay gas in USDC instead of SOL
-          // feeToken: 'USDC',
-        },
       });
 
       setTxSignature(signature);
-      setRecipient('');
-      setAmount('');
+      setRecipient("");
+      setAmount("");
     } catch (err: any) {
-      console.error('Transfer failed:', err);
-      setError(err.message || 'Transaction failed');
+      console.error("Transfer failed:", err);
+      setError(err.message || "Transaction failed");
     } finally {
       setLoading(false);
     }
@@ -73,120 +73,140 @@ export function TransferForm() {
 
   if (!isConnected) {
     return (
-      <div className="p-8 bg-linear-to-br from-gray-50 to-gray-100 rounded-xl border-2 border-dashed border-gray-300">
-        <div className="text-center">
-          <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-            </svg>
-          </div>
-          <p className="text-gray-600 font-medium">Connect your wallet to send transactions</p>
-          <p className="text-sm text-gray-500 mt-1">Gasless transactions powered by Lazorkit</p>
+      <Card className="flex flex-col items-center justify-center py-12 border-dashed border-2 border-slate-200 bg-slate-50/50">
+        <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm border border-slate-100">
+          <svg
+            className="w-8 h-8 text-slate-300"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+            />
+          </svg>
         </div>
-      </div>
+        <p className="text-slate-600 font-medium">Connect wallet to send SOL</p>
+        <p className="text-sm text-slate-400 mt-1">
+          Gasless transactions available
+        </p>
+      </Card>
     );
   }
 
   return (
-    <div className="p-6 bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-      <div className="flex items-center gap-2 mb-4">
-        <h2 className="text-lg font-bold text-gray-900">Send SOL</h2>
-        <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">Gasless</span>
+    <Card variant="hover" className="relative overflow-hidden">
+      {/* Background Accent */}
+      <div className="absolute top-0 right-0 p-3 opacity-10 pointer-events-none">
+        <svg
+          className="w-32 h-32 text-blue-600"
+          fill="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path d="M12 2L2 22h20L12 2zm0 4l6.5 13h-13L12 6z" />
+        </svg>
       </div>
 
-      <form onSubmit={handleTransfer} className="space-y-4">
-        <div>
-          <label htmlFor="recipient" className="block text-sm font-semibold text-gray-700 mb-2">
-            Recipient Address
-          </label>
-          <input
-            id="recipient"
-            type="text"
-            value={recipient}
-            onChange={(e) => setRecipient(e.target.value)}
-            placeholder="Enter Solana address"
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-400 transition-all font-mono text-sm"
-            required
-          />
-        </div>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-lg font-bold text-slate-900">Send SOL</h2>
+        <Badge variant="success">Gasless</Badge>
+      </div>
 
-        <div>
-          <label htmlFor="amount" className="block text-sm font-semibold text-gray-700 mb-2">
-            Amount (SOL)
-          </label>
-          <div className="relative">
-            <input
-              id="amount"
-              type="number"
-              step="0.001"
-              min="0"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="0.1"
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-400 transition-all"
-              required
-            />
-            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">SOL</span>
-          </div>
-        </div>
+      <form onSubmit={handleTransfer} className="space-y-5 relative z-10">
+        <Input
+          label="Recipient Address"
+          placeholder="Solana address..."
+          value={recipient}
+          onChange={(e) => setRecipient(e.target.value)}
+          required
+        />
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 disabled:from-gray-400 disabled:to-gray-400 disabled:cursor-not-allowed transition-all font-semibold shadow-md hover:shadow-lg disabled:shadow-none flex items-center justify-center gap-2"
-        >
-          {loading ? (
-            <>
-              <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Sending...
-            </>
-          ) : (
-            <>
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-              </svg>
-              Send Transaction
-            </>
-          )}
-        </button>
+        <Input
+          label="Amount"
+          placeholder="0.0"
+          type="number"
+          step="0.000000001"
+          min="0"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          rightElement={
+            <span className="font-bold text-slate-500 text-sm">SOL</span>
+          }
+          required
+        />
+
+        <Button type="submit" isLoading={loading} className="w-full">
+          {loading ? "Processing..." : "Send Transaction"}
+        </Button>
       </form>
 
       {error && (
-        <div className="mt-4 p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg animate-in slide-in-from-top">
-          <div className="flex items-start gap-3">
-            <span className="text-red-500 text-xl">❌</span>
-            <div>
-              <p className="font-semibold text-red-900 text-sm">Transaction Failed</p>
-              <p className="text-sm text-red-700 mt-1">{error}</p>
-            </div>
+        <div className="mt-4 p-3 bg-red-50 border border-red-100 rounded-lg flex items-start gap-3 animate-enter">
+          <div className="text-red-500 mt-0.5">
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
           </div>
+          <p className="text-sm text-red-600">{error}</p>
         </div>
       )}
 
       {txSignature && (
-        <div className="mt-4 p-4 bg-green-50 border-l-4 border-green-500 rounded-r-lg animate-in slide-in-from-top">
-          <div className="flex items-start gap-3">
-            <span className="text-green-500 text-xl">✅</span>
-            <div className="flex-1">
-              <p className="font-semibold text-green-900 text-sm mb-2">Transaction Successful!</p>
-              <a
-                href={`https://explorer.solana.com/tx/${txSignature}?cluster=devnet`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 font-medium group"
+        <div className="mt-4 p-4 bg-emerald-50 border border-emerald-100 rounded-lg animate-enter">
+          <div className="flex items-center gap-2 mb-1">
+            <div className="w-5 h-5 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600">
+              <svg
+                className="w-3 h-3"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
               >
-                View on Solana Explorer
-                <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
-              </a>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={3}
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
             </div>
+            <p className="font-semibold text-emerald-900 text-sm">Success!</p>
           </div>
+          <a
+            href={`https://explorer.solana.com/tx/${txSignature}?cluster=devnet`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-emerald-600 hover:text-emerald-700 hover:underline flex items-center gap-1 ml-7"
+          >
+            View on Explorer
+            <svg
+              className="w-3 h-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+              />
+            </svg>
+          </a>
         </div>
       )}
-    </div>
+    </Card>
   );
 }

@@ -1,38 +1,33 @@
-'use client';
+"use client";
 
-import { useWallet } from '@lazorkit/wallet';
-import { useState } from 'react';
+import { useWallet } from "@lazorkit/wallet";
+import { useState } from "react";
+import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 
 /**
  * SignMessage Component
- * 
  * Demonstrates how to sign messages with Lazorkit passkeys.
- * 
- * Use cases:
- * - Verify wallet ownership
- * - Sign authentication challenges
- * - Prove identity without transactions
- * 
- * The signMessage method uses the user's passkey to sign arbitrary text.
  */
 export function SignMessage() {
   const { signMessage, isConnected } = useWallet();
-  const [message, setMessage] = useState('');
-  const [signature, setSignature] = useState('');
+  const [message, setMessage] = useState("");
+  const [signature, setSignature] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const handleSign = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!message.trim()) {
-      setError('Please enter a message to sign');
+      setError("Please enter a message to sign");
       return;
     }
 
     setLoading(true);
-    setError('');
-    setSignature('');
+    setError("");
+    setSignature("");
 
     try {
       // Sign the message using the passkey
@@ -40,10 +35,10 @@ export function SignMessage() {
 
       // The result contains the signature and the signed payload
       setSignature(result.signature);
-      console.log('Signed payload:', result.signedPayload);
+      console.log("Signed payload:", result.signedPayload);
     } catch (err: any) {
-      console.error('Signing failed:', err);
-      setError(err.message || 'Failed to sign message');
+      console.error("Signing failed:", err);
+      setError(err.message || "Failed to sign message");
     } finally {
       setLoading(false);
     }
@@ -51,100 +46,134 @@ export function SignMessage() {
 
   if (!isConnected) {
     return (
-      <div className="p-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border-2 border-dashed border-gray-300">
-        <div className="text-center">
-          <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-            </svg>
-          </div>
-          <p className="text-gray-600 font-medium">Connect your wallet to sign messages</p>
-          <p className="text-sm text-gray-500 mt-1">Prove ownership without transactions</p>
+      <Card className="flex flex-col items-center justify-center py-12 border-dashed border-2 border-slate-200 bg-slate-50/50">
+        <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm border border-slate-100">
+          <svg
+            className="w-8 h-8 text-slate-300"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+            />
+          </svg>
         </div>
-      </div>
+        <p className="text-slate-600 font-medium">
+          Connect wallet to sign messages
+        </p>
+        <p className="text-sm text-slate-400 mt-1">Prove ownership securely</p>
+      </Card>
     );
   }
 
   return (
-    <div className="p-6 bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-      <div className="flex items-center gap-2 mb-4">
-        <h2 className="text-lg font-bold text-gray-900">Sign Message</h2>
-        <span className="px-2 py-1 bg-purple-100 text-purple-700 text-xs font-semibold rounded-full">No Gas</span>
+    <Card variant="hover">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-lg font-bold text-slate-900">Sign Message</h2>
+        <Badge variant="neutral">Off-chain</Badge>
       </div>
 
       <form onSubmit={handleSign} className="space-y-4">
         <div>
-          <label htmlFor="message" className="block text-sm font-semibold text-gray-700 mb-2">
-            Message to Sign
+          <label
+            htmlFor="message"
+            className="block text-sm font-semibold text-slate-700 mb-2"
+          >
+            Message
           </label>
           <textarea
             id="message"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="Enter any message to sign with your passkey..."
+            placeholder="Enter any message to sign..."
             rows={4}
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900 placeholder-gray-400 resize-none transition-all"
+            className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:ring-0 focus:outline-none text-slate-900 placeholder-slate-400 resize-none transition-all duration-200"
             required
           />
-          <p className="text-xs text-gray-500 mt-2">💡 Use this to prove wallet ownership or authenticate</p>
+          <p className="text-xs text-slate-500 mt-2 flex items-center gap-1">
+            <svg
+              className="w-3 h-3 text-slate-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            This action verifies your identity without costing gas.
+          </p>
         </div>
 
-        <button
+        <Button
           type="submit"
-          disabled={loading}
-          className="w-full px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 disabled:from-gray-400 disabled:to-gray-400 disabled:cursor-not-allowed transition-all font-semibold shadow-md hover:shadow-lg disabled:shadow-none flex items-center justify-center gap-2"
+          isLoading={loading}
+          className="w-full bg-slate-900 hover:bg-slate-800 text-white shadow-slate-900/10"
         >
-          {loading ? (
-            <>
-              <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Signing...
-            </>
-          ) : (
-            <>
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-              </svg>
-              Sign Message
-            </>
-          )}
-        </button>
+          {loading ? "Signing..." : "Sign Message"}
+        </Button>
       </form>
 
       {error && (
-        <div className="mt-4 p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg animate-in slide-in-from-top">
-          <div className="flex items-start gap-3">
-            <span className="text-red-500 text-xl">❌</span>
-            <div>
-              <p className="font-semibold text-red-900 text-sm">Signing Failed</p>
-              <p className="text-sm text-red-700 mt-1">{error}</p>
-            </div>
+        <div className="mt-4 p-3 bg-red-50 border border-red-100 rounded-lg flex items-start gap-3 animate-enter">
+          <div className="text-red-500 mt-0.5">
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
           </div>
+          <p className="text-sm text-red-600">{error}</p>
         </div>
       )}
 
       {signature && (
-        <div className="mt-4 p-4 bg-purple-50 border-l-4 border-purple-500 rounded-r-lg animate-in slide-in-from-top">
-          <div className="flex items-start gap-3">
-            <span className="text-purple-500 text-xl">✅</span>
-            <div className="flex-1">
-              <p className="font-semibold text-purple-900 text-sm mb-3">Message Signed Successfully!</p>
-              <div className="space-y-2">
-                <div>
-                  <p className="text-xs text-purple-700 font-semibold mb-2 uppercase tracking-wide">Signature</p>
-                  <div className="bg-white p-3 rounded-lg border border-purple-200">
-                    <p className="text-xs font-mono text-purple-900 break-all leading-relaxed">
-                      {signature}
-                    </p>
-                  </div>
-                </div>
-              </div>
+        <div className="mt-6 p-4 bg-slate-50 border border-slate-200 rounded-xl animate-enter">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
+              <svg
+                className="w-3.5 h-3.5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2.5}
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            </div>
+            <p className="font-bold text-slate-900 text-sm">
+              Signature Generated
+            </p>
+          </div>
+
+          <div className="group relative">
+            <div className="bg-white p-3 rounded-lg border border-slate-200 shadow-sm hover:border-blue-300 transition-colors">
+              <p className="text-xs font-mono text-slate-600 break-all leading-relaxed max-h-32 overflow-y-auto custom-scrollbar">
+                {signature}
+              </p>
             </div>
           </div>
         </div>
       )}
-    </div>
+    </Card>
   );
 }

@@ -1,182 +1,271 @@
-import { ConnectButton } from '@/components/ConnectButton';
-import { WalletInfo } from '@/components/WalletInfo';
-import { TransferForm } from '@/components/TransferForm';
-import { USDCTransferForm } from '@/components/USDCTransferForm';
-import { SignMessage } from '@/components/SignMessage';
-import Image from 'next/image';
-import Link from 'next/link';
+import { ConnectButton } from "@/components/ConnectButton";
+import { WalletInfo } from "@/components/WalletInfo";
+import { TransferForm } from "@/components/TransferForm";
+import { USDCTransferForm } from "@/components/USDCTransferForm";
+import { SignMessage } from "@/components/SignMessage";
+import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-      {/* Header */}
-      <header className="sticky top-0 z-50 border-b bg-white/90 backdrop-blur-md shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-              <span className="text-white text-xl font-bold">L</span>
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">Lazorkit Starter</h1>
-              <p className="text-xs text-gray-500">Passkey-native Solana</p>
-            </div>
+    <div className="min-h-screen pb-20">
+      {/* Floating Navbar */}
+      <nav className="fixed top-6 left-1/2 -translate-x-1/2 w-[95%] max-w-5xl z-50 glass-panel rounded-full px-6 py-3 flex items-center justify-between shadow-xl shadow-blue-900/5">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/30">
+            <span className="text-white font-bold">L</span>
           </div>
-          <div className="flex items-center gap-3">
-            <Link
-              href="/docs"
-              className="px-4 py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors flex items-center gap-2"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-              </svg>
-              Docs
-            </Link>
-            <ConnectButton />
-          </div>
+          <span className="font-bold text-slate-800 tracking-tight">
+            Lazorkit
+          </span>
         </div>
-      </header>
 
-      {/* Main Content */}
-      <main className="max-w-6xl mx-auto px-4 py-8">
-        {/* Development Notice */}
-        {typeof window !== 'undefined' && window.location.hostname === 'localhost' && (
-          <div className="mb-6 p-4 bg-amber-50 border-l-4 border-amber-400 rounded-r-lg shadow-sm">
-            <div className="flex items-start gap-3">
-              <span className="text-2xl">⚠️</span>
-              <div>
-                <p className="font-semibold text-amber-900 mb-1">Development Mode</p>
-                <p className="text-sm text-amber-800">
-                  Transaction signing requires HTTPS. Deploy to Vercel/Netlify for full functionality.
-                  Connection and balance checking work locally.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
+        <div className="hidden md:flex items-center gap-6">
+          {["Features", "Demo", "Docs"].map((item) => (
+            <a
+              key={item}
+              href={`#${item.toLowerCase()}`}
+              className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors"
+            >
+              {item}
+            </a>
+          ))}
+        </div>
 
-        {/* Hero Section */}
-        <div className="mb-12 text-center">
-          <div className="inline-block mb-4 px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
-            ✨ No Seed Phrases Required
+        <div className="flex items-center gap-3">
+          <Link
+            href="/docs"
+            className="hidden sm:flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+          >
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+              />
+            </svg>
+            Docs
+          </Link>
+          <ConnectButton />
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <section className="pt-40 pb-20 px-4 text-center relative overflow-hidden">
+        {/* Background Blur Elements */}
+        <div className="absolute top-20 left-1/4 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl -z-10 animate-pulse-soft"></div>
+        <div
+          className="absolute bottom-10 right-1/4 w-96 h-96 bg-cyan-300/10 rounded-full blur-3xl -z-10 animate-pulse-soft"
+          style={{ animationDelay: "1s" }}
+        ></div>
+
+        <div className="animate-enter">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-700 text-sm font-medium mb-6">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+            </span>
+            Next-Gen Solana UX
           </div>
-          <h2 className="text-5xl font-bold text-gray-900 mb-4 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-            Welcome to Lazorkit
-          </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-            Experience Solana with <span className="font-semibold text-gray-900">FaceID</span>, <span className="font-semibold text-gray-900">TouchID</span>, or <span className="font-semibold text-gray-900">Windows Hello</span>.
-            Create a smart wallet and send gasless transactions in seconds.
+
+          <h1 className="text-5xl md:text-7xl font-bold text-slate-900 mb-6 tracking-tight leading-tight">
+            The Future of <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500">
+              Web3 Onboarding
+            </span>
+          </h1>
+
+          <p className="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto mb-10 leading-relaxed">
+            Forget seed phrases. Authenticate with <strong>FaceID</strong> &{" "}
+            <strong>TouchID</strong>. Experience gasless transactions and
+            instant onboarding on Solana.
           </p>
-        </div>
 
-        {/* Features Grid */}
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
-          <div className="group p-6 bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-lg hover:border-blue-300 transition-all duration-300">
-            <div className="mb-4 w-14 h-14 bg-blue-100 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-              <Image
-                src="/icons/passkey.svg"
-                alt="Passkey"
-                width={32}
-                height={32}
-                className="text-blue-600"
-              />
-            </div>
-            <h3 className="font-bold text-lg mb-2 text-gray-900">Passkey Authentication</h3>
-            <p className="text-sm text-gray-600 leading-relaxed">
-              No seed phrases. Just use your device's biometric authentication.
-            </p>
-          </div>
-
-          <div className="group p-6 bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-lg hover:border-indigo-300 transition-all duration-300">
-            <div className="mb-4 w-14 h-14 bg-indigo-100 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-              <Image
-                src="/icons/lightning.svg"
-                alt="Lightning"
-                width={32}
-                height={32}
-              />
-            </div>
-            <h3 className="font-bold text-lg mb-2 text-gray-900">Gasless Transactions</h3>
-            <p className="text-sm text-gray-600 leading-relaxed">
-              Send transactions without holding SOL. Paymaster covers the fees.
-            </p>
-          </div>
-
-          <div className="group p-6 bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-lg hover:border-purple-300 transition-all duration-300">
-            <div className="mb-4 w-14 h-14 bg-purple-100 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-              <Image
-                src="/icons/wallet.svg"
-                alt="Wallet"
-                width={32}
-                height={32}
-              />
-            </div>
-            <h3 className="font-bold text-lg mb-2 text-gray-900">Smart Wallets</h3>
-            <p className="text-sm text-gray-600 leading-relaxed">
-              Programmable accounts with recovery and session key support.
-            </p>
-          </div>
-        </div>
-
-        {/* Wallet Dashboard */}
-        <div className="grid md:grid-cols-2 gap-6 mb-6">
-          <WalletInfo />
-          <div className="space-y-6">
-            <TransferForm />
-            <USDCTransferForm />
-          </div>
-        </div>
-
-        {/* Sign Message Section */}
-        <div className="max-w-2xl mx-auto">
-          <SignMessage />
-        </div>
-
-        {/* Resources */}
-        <div className="mt-12 p-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-200">
-          <h3 className="font-bold text-xl mb-4 text-gray-900">Learn More</h3>
-          <div className="grid sm:grid-cols-3 gap-4">
-            <a
-              href="https://docs.lazorkit.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 p-4 bg-white rounded-lg hover:shadow-md transition-shadow group"
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Button
+              size="lg"
+              className="shadow-xl shadow-blue-500/20 w-full sm:w-auto"
             >
-              <span className="text-2xl">📚</span>
-              <div>
-                <p className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">Documentation</p>
-                <p className="text-xs text-gray-500">Full SDK docs</p>
-              </div>
-            </a>
-            <a
-              href="https://github.com/lazor-kit/lazor-kit"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 p-4 bg-white rounded-lg hover:shadow-md transition-shadow group"
-            >
-              <span className="text-2xl">💻</span>
-              <div>
-                <p className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">GitHub</p>
-                <p className="text-xs text-gray-500">Source code</p>
-              </div>
-            </a>
-            <a
-              href="https://t.me/lazorkit"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 p-4 bg-white rounded-lg hover:shadow-md transition-shadow group"
-            >
-              <span className="text-2xl">💬</span>
-              <div>
-                <p className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">Telegram</p>
-                <p className="text-xs text-gray-500">Join community</p>
-              </div>
-            </a>
+              Get Started Now
+            </Button>
+            <Button variant="outline" size="lg" className="w-full sm:w-auto">
+              View Documentation
+            </Button>
           </div>
         </div>
+      </section>
+
+      {/* Main Dashboard Grid */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-24">
+        {/* Features Cards */}
+        <section id="features" className="grid md:grid-cols-3 gap-6">
+          <Card variant="hover" className="border-t-4 border-t-blue-500">
+            <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center mb-4 text-blue-600">
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"
+                />
+              </svg>
+            </div>
+            <h3 className="text-lg font-bold text-slate-900 mb-2">
+              Biometric Auth
+            </h3>
+            <p className="text-slate-600 leading-relaxed">
+              Login utilizing secure passkeys powered by your device's secure
+              enclave. No mnemonics.
+            </p>
+          </Card>
+
+          <Card variant="hover" className="border-t-4 border-t-indigo-500">
+            <div className="w-12 h-12 bg-indigo-50 rounded-lg flex items-center justify-center mb-4 text-indigo-600">
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 10V3L4 14h7v7l9-11h-7z"
+                />
+              </svg>
+            </div>
+            <h3 className="text-lg font-bold text-slate-900 mb-2">
+              Gasless Txns
+            </h3>
+            <p className="text-slate-600 leading-relaxed">
+              Remove friction by sponsoring user gas fees. Paymaster
+              infrastructure included.
+            </p>
+          </Card>
+
+          <Card variant="hover" className="border-t-4 border-t-cyan-500">
+            <div className="w-12 h-12 bg-cyan-50 rounded-lg flex items-center justify-center mb-4 text-cyan-600">
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+                />
+              </svg>
+            </div>
+            <h3 className="text-lg font-bold text-slate-900 mb-2">
+              Smart Accounts
+            </h3>
+            <p className="text-slate-600 leading-relaxed">
+              Programmable wallets with account recovery, session keys, and
+              automation capabilities.
+            </p>
+          </Card>
+        </section>
+
+        {/* Interactive Demo Section */}
+        <section id="demo" className="scroll-mt-24">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-3xl font-bold text-slate-900 mb-2">
+                Interactive Demo
+              </h2>
+              <p className="text-slate-600">
+                Try out the gasless transactions on Solana Devnet
+              </p>
+            </div>
+            <div className="hidden sm:block">
+              <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-bold border border-yellow-200">
+                DEVNET ONLY
+              </span>
+            </div>
+          </div>
+
+          <div className="grid lg:grid-cols-12 gap-8">
+            {/* Left Column: Wallet & Balance */}
+            <div className="lg:col-span-4 space-y-6">
+              <WalletInfo />
+              <div className="hidden lg:block">
+                <SignMessage />
+              </div>
+            </div>
+
+            {/* Right Column: Key Actions */}
+            <div className="lg:col-span-8 space-y-6">
+              <div className="grid md:grid-cols-2 gap-6">
+                <TransferForm />
+                <USDCTransferForm />
+              </div>
+              <div className="lg:hidden">
+                <SignMessage />
+              </div>
+            </div>
+          </div>
+        </section>
 
         {/* Footer */}
-        <footer className="mt-12 pt-8 border-t border-gray-200 text-center text-sm text-gray-500">
-          <p>Built with ❤️ for the Lazorkit Bounty | Powered by Solana</p>
+        <footer className="border-t border-slate-200 pt-10 pb-6">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="text-center md:text-left">
+              <p className="text-slate-900 font-bold mb-1">Lazorkit Starter</p>
+              <p className="text-sm text-slate-500">
+                Built for the Global Solana Bounty 2026
+              </p>
+            </div>
+
+            <div className="flex items-center gap-6">
+              <a
+                href="https://github.com/lazor-kit/lazor-kit"
+                target="_blank"
+                className="text-slate-400 hover:text-slate-900 transition-colors"
+              >
+                <svg
+                  className="w-6 h-6"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </a>
+              <a
+                href="https://twitter.com"
+                target="_blank"
+                className="text-slate-400 hover:text-blue-400 transition-colors"
+              >
+                <svg
+                  className="w-6 h-6"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
+                </svg>
+              </a>
+            </div>
+          </div>
         </footer>
       </main>
     </div>
