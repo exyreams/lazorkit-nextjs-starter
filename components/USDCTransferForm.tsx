@@ -111,12 +111,12 @@ export function USDCTransferForm() {
     }
   };
 
-  if (!isConnected) {
+    if (!isConnected) {
     return (
-      <Card className="flex flex-col items-center justify-center py-12 border-dashed border-2 border-slate-200 bg-slate-50/50">
-        <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm border border-slate-100">
+      <Card className="flex flex-col items-center justify-center py-12 border-dashed border-2 border-border bg-muted/10">
+        <div className="w-16 h-16 bg-muted/30 rounded-full flex items-center justify-center mb-4 shadow-inner border border-border">
           <svg
-            className="w-8 h-8 text-slate-300"
+            className="w-8 h-8 text-muted-foreground/50"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -129,10 +129,10 @@ export function USDCTransferForm() {
             />
           </svg>
         </div>
-        <p className="text-slate-600 font-medium">
+        <p className="text-muted-foreground font-medium font-mono">
           Connect wallet to send USDC
         </p>
-        <p className="text-sm text-slate-400 mt-1">
+        <p className="text-xs text-muted-foreground/50 mt-1 uppercase tracking-wider">
           Gasless token transfers available
         </p>
       </Card>
@@ -140,11 +140,11 @@ export function USDCTransferForm() {
   }
 
   return (
-    <Card variant="hover" className="relative overflow-hidden">
+    <Card variant="hover" className="relative overflow-hidden group">
       {/* Background Accent */}
-      <div className="absolute bottom-0 left-0 p-3 opacity-10 pointer-events-none">
+      <div className="absolute bottom-0 left-0 p-3 opacity-10 pointer-events-none group-hover:opacity-20 transition-opacity">
         <svg
-          className="w-40 h-40 text-cyan-600"
+          className="w-40 h-40 text-cyan-500"
           fill="currentColor"
           viewBox="0 0 24 24"
         >
@@ -153,7 +153,7 @@ export function USDCTransferForm() {
       </div>
 
       <div className="flex items-center gap-2 mb-6 relative z-10">
-        <h2 className="text-lg font-bold text-slate-900">Send USDC</h2>
+        <h2 className="text-lg font-bold text-foreground font-mono">Send USDC</h2>
         <Badge variant="success">Gasless</Badge>
         <Badge variant="info">SPL Token</Badge>
       </div>
@@ -177,13 +177,13 @@ export function USDCTransferForm() {
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             rightElement={
-              <span className="font-bold text-slate-500 text-sm">USDC</span>
+              <span className="font-bold text-muted-foreground text-xs font-mono">USDC</span>
             }
             required
           />
-          <p className="text-xs text-slate-400 mt-2 flex items-center gap-1">
+          <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1 font-mono">
             <svg
-              className="w-3 h-3"
+              className="w-3 h-3 text-muted-foreground/70"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -209,7 +209,7 @@ export function USDCTransferForm() {
       </form>
 
       {error && (
-        <div className="mt-4 p-3 bg-red-50 border border-red-100 rounded-lg flex items-start gap-3 animate-enter">
+        <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg flex items-start gap-3 animate-enter">
           <div className="text-red-500 mt-0.5">
             <svg
               className="w-5 h-5"
@@ -225,14 +225,14 @@ export function USDCTransferForm() {
               />
             </svg>
           </div>
-          <p className="text-sm text-red-600 font-medium">{error}</p>
+          <p className="text-xs text-red-500 font-medium font-mono">{error}</p>
         </div>
       )}
 
       {txSignature && (
-        <div className="mt-4 p-4 bg-emerald-50 border border-emerald-100 rounded-lg animate-enter">
+        <div className="mt-4 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-lg animate-enter">
           <div className="flex items-center gap-2 mb-1">
-            <div className="w-5 h-5 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600">
+            <div className="w-5 h-5 bg-emerald-500/20 rounded-full flex items-center justify-center text-emerald-500">
               <svg
                 className="w-3 h-3"
                 fill="none"
@@ -247,7 +247,7 @@ export function USDCTransferForm() {
                 />
               </svg>
             </div>
-            <p className="font-semibold text-emerald-900 text-sm">
+            <p className="font-semibold text-emerald-500 text-sm font-mono">
               USDC Transfer Successful!
             </p>
           </div>
@@ -255,7 +255,7 @@ export function USDCTransferForm() {
             href={`https://explorer.solana.com/tx/${txSignature}?cluster=devnet`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs text-emerald-600 hover:text-emerald-700 hover:underline flex items-center gap-1 ml-7"
+            className="text-xs text-emerald-500 hover:text-emerald-400 hover:underline flex items-center gap-1 ml-7 font-mono"
           >
             View on Explorer
             <svg

@@ -10,14 +10,14 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="min-h-screen pb-20">
+    <div className="min-h-screen pb-20 relative overflow-hidden">
       {/* Floating Navbar */}
-      <nav className="fixed top-6 left-1/2 -translate-x-1/2 w-[95%] max-w-5xl z-50 glass-panel rounded-full px-6 py-3 flex items-center justify-between shadow-xl shadow-blue-900/5">
+      <nav className="fixed top-6 left-1/2 -translate-x-1/2 w-[95%] max-w-5xl z-50 glass-panel rounded-full px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/30">
-            <span className="text-white font-bold">L</span>
+          <div className="w-8 h-8 flex items-center justify-center rounded-lg bg-primary/10 border border-primary/20 shadow-[0_0_15px_rgba(239,68,68,0.2)]">
+            <span className="text-primary font-bold">L</span>
           </div>
-          <span className="font-bold text-slate-800 tracking-tight">
+          <span className="font-bold text-foreground tracking-tight">
             Lazorkit
           </span>
         </div>
@@ -27,7 +27,7 @@ export default function Home() {
             <a
               key={item}
               href={`#${item.toLowerCase()}`}
-              className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors"
+              className="text-sm font-bold font-mono text-muted-foreground hover:text-primary transition-colors uppercase tracking-wider"
             >
               {item}
             </a>
@@ -37,7 +37,7 @@ export default function Home() {
         <div className="flex items-center gap-3">
           <Link
             href="/docs"
-            className="hidden sm:flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+            className="hidden sm:flex items-center gap-2 text-sm font-bold font-mono text-muted-foreground hover:text-foreground transition-colors uppercase tracking-wider"
           >
             <svg
               className="w-4 h-4"
@@ -59,40 +59,40 @@ export default function Home() {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-40 pb-20 px-4 text-center relative overflow-hidden">
+      <section className="pt-40 pb-20 px-4 text-center relative">
         {/* Background Blur Elements */}
-        <div className="absolute top-20 left-1/4 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl -z-10 animate-pulse-soft"></div>
+        <div className="absolute top-20 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl -z-10 animate-pulse-soft"></div>
         <div
-          className="absolute bottom-10 right-1/4 w-96 h-96 bg-cyan-300/10 rounded-full blur-3xl -z-10 animate-pulse-soft"
+          className="absolute bottom-10 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl -z-10 animate-pulse-soft"
           style={{ animationDelay: "1s" }}
         ></div>
 
         <div className="animate-enter">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-700 text-sm font-medium mb-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10 text-primary text-xs font-mono font-bold uppercase tracking-wider mb-8">
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
             </span>
             Next-Gen Solana UX
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-bold text-slate-900 mb-6 tracking-tight leading-tight">
+          <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-6 tracking-tight leading-tight">
             The Future of <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-blue-500 to-indigo-500">
               Web3 Onboarding
             </span>
           </h1>
 
-          <p className="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto mb-10 leading-relaxed">
-            Forget seed phrases. Authenticate with <strong>FaceID</strong> &{" "}
-            <strong>TouchID</strong>. Experience gasless transactions and
+          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed font-light">
+            Forget seed phrases. Authenticate with <strong className="text-foreground">FaceID</strong> &{" "}
+            <strong className="text-foreground">TouchID</strong>. Experience gasless transactions and
             instant onboarding on Solana.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button
               size="lg"
-              className="shadow-xl shadow-blue-500/20 w-full sm:w-auto"
+              className="w-full sm:w-auto shadow-[0_0_20px_rgba(239,68,68,0.3)]"
             >
               Get Started Now
             </Button>
@@ -107,76 +107,40 @@ export default function Home() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-24">
         {/* Features Cards */}
         <section id="features" className="grid md:grid-cols-3 gap-6">
-          <Card variant="hover" className="border-t-4 border-t-blue-500">
-            <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center mb-4 text-blue-600">
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"
-                />
-              </svg>
+          <Card variant="hover" className="border-l-4 border-l-blue-500 rounded-lg">
+            <div className="w-12 h-12 bg-blue-500/10 rounded-lg flex items-center justify-center mb-4 text-blue-500 font-mono text-xs border border-blue-500/20">
+              BIO_AUTH
             </div>
-            <h3 className="text-lg font-bold text-slate-900 mb-2">
+            <h3 className="text-lg font-bold text-foreground mb-2 font-mono">
               Biometric Auth
             </h3>
-            <p className="text-slate-600 leading-relaxed">
+            <p className="text-muted-foreground leading-relaxed text-sm">
               Login utilizing secure passkeys powered by your device's secure
               enclave. No mnemonics.
             </p>
           </Card>
 
-          <Card variant="hover" className="border-t-4 border-t-indigo-500">
-            <div className="w-12 h-12 bg-indigo-50 rounded-lg flex items-center justify-center mb-4 text-indigo-600">
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 10V3L4 14h7v7l9-11h-7z"
-                />
-              </svg>
+          <Card variant="hover" className="border-l-4 border-l-indigo-500 rounded-lg">
+            <div className="w-12 h-12 bg-indigo-500/10 rounded-lg flex items-center justify-center mb-4 text-indigo-500 font-mono text-xs border border-indigo-500/20">
+              GAS_LESS
             </div>
-            <h3 className="text-lg font-bold text-slate-900 mb-2">
+            <h3 className="text-lg font-bold text-foreground mb-2 font-mono">
               Gasless Txns
             </h3>
-            <p className="text-slate-600 leading-relaxed">
+            <p className="text-muted-foreground leading-relaxed text-sm">
               Remove friction by sponsoring user gas fees. Paymaster
               infrastructure included.
             </p>
           </Card>
 
-          <Card variant="hover" className="border-t-4 border-t-cyan-500">
-            <div className="w-12 h-12 bg-cyan-50 rounded-lg flex items-center justify-center mb-4 text-cyan-600">
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
-                />
-              </svg>
+          <Card variant="hover" className="border-l-4 border-l-cyan-500 rounded-lg">
+            <div className="w-12 h-12 bg-cyan-500/10 rounded-lg flex items-center justify-center mb-4 text-cyan-500 font-mono text-xs border border-cyan-500/20">
+              SMART_ACC
             </div>
-            <h3 className="text-lg font-bold text-slate-900 mb-2">
+            <h3 className="text-lg font-bold text-foreground mb-2 font-mono">
               Smart Accounts
             </h3>
-            <p className="text-slate-600 leading-relaxed">
+            <p className="text-muted-foreground leading-relaxed text-sm">
               Programmable wallets with account recovery, session keys, and
               automation capabilities.
             </p>
@@ -187,16 +151,16 @@ export default function Home() {
         <section id="demo" className="scroll-mt-24">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h2 className="text-3xl font-bold text-slate-900 mb-2">
+              <h2 className="text-3xl font-bold text-foreground mb-2">
                 Interactive Demo
               </h2>
-              <p className="text-slate-600">
-                Try out the gasless transactions on Solana Devnet
+              <p className="text-muted-foreground font-mono text-sm">
+                // Try out the gasless transactions on Solana Devnet
               </p>
             </div>
             <div className="hidden sm:block">
-              <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-bold border border-yellow-200">
-                DEVNET ONLY
+              <span className="px-3 py-1 bg-amber-500/10 text-amber-500 rounded-full text-xs font-bold border border-amber-500/20 font-mono">
+                DEVNET_ONLY
               </span>
             </div>
           </div>
@@ -224,11 +188,11 @@ export default function Home() {
         </section>
 
         {/* Footer */}
-        <footer className="border-t border-slate-200 pt-10 pb-6">
+        <footer className="border-t border-border pt-10 pb-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="text-center md:text-left">
-              <p className="text-slate-900 font-bold mb-1">Lazorkit Starter</p>
-              <p className="text-sm text-slate-500">
+              <p className="text-foreground font-bold mb-1">Lazorkit Starter</p>
+              <p className="text-sm text-muted-foreground font-mono">
                 Built for the Global Solana Bounty 2026
               </p>
             </div>
@@ -237,7 +201,7 @@ export default function Home() {
               <a
                 href="https://github.com/lazor-kit/lazor-kit"
                 target="_blank"
-                className="text-slate-400 hover:text-slate-900 transition-colors"
+                className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 <svg
                   className="w-6 h-6"
@@ -254,7 +218,7 @@ export default function Home() {
               <a
                 href="https://twitter.com"
                 target="_blank"
-                className="text-slate-400 hover:text-blue-400 transition-colors"
+                className="text-muted-foreground hover:text-blue-400 transition-colors"
               >
                 <svg
                   className="w-6 h-6"

@@ -73,10 +73,10 @@ export function TransferForm() {
 
   if (!isConnected) {
     return (
-      <Card className="flex flex-col items-center justify-center py-12 border-dashed border-2 border-slate-200 bg-slate-50/50">
-        <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm border border-slate-100">
+      <Card className="flex flex-col items-center justify-center py-12 border-dashed border-2 border-border bg-muted/20">
+        <div className="w-16 h-16 bg-muted/30 rounded-full flex items-center justify-center mb-4 shadow-inner border border-border">
           <svg
-            className="w-8 h-8 text-slate-300"
+            className="w-8 h-8 text-muted-foreground/50"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -89,8 +89,8 @@ export function TransferForm() {
             />
           </svg>
         </div>
-        <p className="text-slate-600 font-medium">Connect wallet to send SOL</p>
-        <p className="text-sm text-slate-400 mt-1">
+        <p className="text-muted-foreground font-medium font-mono">Connect wallet to send SOL</p>
+        <p className="text-xs text-muted-foreground/50 mt-1 uppercase tracking-wider">
           Gasless transactions available
         </p>
       </Card>
@@ -98,11 +98,11 @@ export function TransferForm() {
   }
 
   return (
-    <Card variant="hover" className="relative overflow-hidden">
+    <Card variant="hover" className="relative overflow-hidden group">
       {/* Background Accent */}
-      <div className="absolute top-0 right-0 p-3 opacity-10 pointer-events-none">
+      <div className="absolute top-0 right-0 p-3 opacity-10 pointer-events-none group-hover:opacity-20 transition-opacity">
         <svg
-          className="w-32 h-32 text-blue-600"
+          className="w-32 h-32 text-primary"
           fill="currentColor"
           viewBox="0 0 24 24"
         >
@@ -111,7 +111,7 @@ export function TransferForm() {
       </div>
 
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-bold text-slate-900">Send SOL</h2>
+        <h2 className="text-lg font-bold text-foreground font-mono">Send SOL</h2>
         <Badge variant="success">Gasless</Badge>
       </div>
 
@@ -133,7 +133,7 @@ export function TransferForm() {
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
           rightElement={
-            <span className="font-bold text-slate-500 text-sm">SOL</span>
+            <span className="font-bold text-muted-foreground text-xs font-mono">SOL</span>
           }
           required
         />
@@ -144,7 +144,7 @@ export function TransferForm() {
       </form>
 
       {error && (
-        <div className="mt-4 p-3 bg-red-50 border border-red-100 rounded-lg flex items-start gap-3 animate-enter">
+        <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg flex items-start gap-3 animate-enter">
           <div className="text-red-500 mt-0.5">
             <svg
               className="w-5 h-5"
@@ -160,14 +160,14 @@ export function TransferForm() {
               />
             </svg>
           </div>
-          <p className="text-sm text-red-600">{error}</p>
+          <p className="text-xs text-red-400 font-mono">{error}</p>
         </div>
       )}
 
       {txSignature && (
-        <div className="mt-4 p-4 bg-emerald-50 border border-emerald-100 rounded-lg animate-enter">
+        <div className="mt-4 p-4 bg-green-500/10 border border-green-500/20 rounded-lg animate-enter">
           <div className="flex items-center gap-2 mb-1">
-            <div className="w-5 h-5 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600">
+            <div className="w-5 h-5 bg-green-500/20 rounded-full flex items-center justify-center text-green-500">
               <svg
                 className="w-3 h-3"
                 fill="none"
@@ -182,13 +182,13 @@ export function TransferForm() {
                 />
               </svg>
             </div>
-            <p className="font-semibold text-emerald-900 text-sm">Success!</p>
+            <p className="font-semibold text-green-500 text-sm font-mono">Success!</p>
           </div>
           <a
             href={`https://explorer.solana.com/tx/${txSignature}?cluster=devnet`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs text-emerald-600 hover:text-emerald-700 hover:underline flex items-center gap-1 ml-7"
+            className="text-xs text-green-400 hover:text-green-300 hover:underline flex items-center gap-1 ml-7 font-mono"
           >
             View on Explorer
             <svg

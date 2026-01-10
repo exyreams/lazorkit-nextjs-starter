@@ -44,12 +44,12 @@ export function SignMessage() {
     }
   };
 
-  if (!isConnected) {
+    if (!isConnected) {
     return (
-      <Card className="flex flex-col items-center justify-center py-12 border-dashed border-2 border-slate-200 bg-slate-50/50">
-        <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm border border-slate-100">
+      <Card className="flex flex-col items-center justify-center py-12 border-dashed border-2 border-border bg-muted/10">
+        <div className="w-16 h-16 bg-muted/30 rounded-full flex items-center justify-center mb-4 shadow-inner border border-border">
           <svg
-            className="w-8 h-8 text-slate-300"
+            className="w-8 h-8 text-muted-foreground/50"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -62,10 +62,10 @@ export function SignMessage() {
             />
           </svg>
         </div>
-        <p className="text-slate-600 font-medium">
+        <p className="text-muted-foreground font-medium font-mono">
           Connect wallet to sign messages
         </p>
-        <p className="text-sm text-slate-400 mt-1">Prove ownership securely</p>
+        <p className="text-xs text-muted-foreground/50 mt-1 uppercase tracking-wider">Prove ownership securely</p>
       </Card>
     );
   }
@@ -73,7 +73,7 @@ export function SignMessage() {
   return (
     <Card variant="hover">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-bold text-slate-900">Sign Message</h2>
+        <h2 className="text-lg font-bold text-foreground font-mono">Sign Message</h2>
         <Badge variant="neutral">Off-chain</Badge>
       </div>
 
@@ -81,7 +81,7 @@ export function SignMessage() {
         <div>
           <label
             htmlFor="message"
-            className="block text-sm font-semibold text-slate-700 mb-2"
+            className="block text-xs font-semibold text-muted-foreground mb-2 font-mono uppercase tracking-wider"
           >
             Message
           </label>
@@ -91,12 +91,12 @@ export function SignMessage() {
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Enter any message to sign..."
             rows={4}
-            className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:ring-0 focus:outline-none text-slate-900 placeholder-slate-400 resize-none transition-all duration-200"
+            className="w-full px-4 py-3 bg-muted/50 border border-border rounded-lg focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none text-foreground placeholder-muted-foreground resize-none transition-all duration-200 font-mono text-sm"
             required
           />
-          <p className="text-xs text-slate-500 mt-2 flex items-center gap-1">
+          <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1 font-mono">
             <svg
-              className="w-3 h-3 text-slate-400"
+              className="w-3 h-3 text-muted-foreground/70"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -115,14 +115,14 @@ export function SignMessage() {
         <Button
           type="submit"
           isLoading={loading}
-          className="w-full bg-slate-900 hover:bg-slate-800 text-white shadow-slate-900/10"
+          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20"
         >
           {loading ? "Signing..." : "Sign Message"}
         </Button>
       </form>
 
       {error && (
-        <div className="mt-4 p-3 bg-red-50 border border-red-100 rounded-lg flex items-start gap-3 animate-enter">
+        <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg flex items-start gap-3 animate-enter">
           <div className="text-red-500 mt-0.5">
             <svg
               className="w-5 h-5"
@@ -138,14 +138,14 @@ export function SignMessage() {
               />
             </svg>
           </div>
-          <p className="text-sm text-red-600">{error}</p>
+          <p className="text-sm text-red-500 font-mono">{error}</p>
         </div>
       )}
 
       {signature && (
-        <div className="mt-6 p-4 bg-slate-50 border border-slate-200 rounded-xl animate-enter">
+        <div className="mt-6 p-4 bg-muted/20 border border-border rounded-xl animate-enter">
           <div className="flex items-center gap-2 mb-3">
-            <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
+            <div className="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center text-primary">
               <svg
                 className="w-3.5 h-3.5"
                 fill="none"
@@ -160,14 +160,14 @@ export function SignMessage() {
                 />
               </svg>
             </div>
-            <p className="font-bold text-slate-900 text-sm">
+            <p className="font-bold text-foreground text-sm font-mono">
               Signature Generated
             </p>
           </div>
 
           <div className="group relative">
-            <div className="bg-white p-3 rounded-lg border border-slate-200 shadow-sm hover:border-blue-300 transition-colors">
-              <p className="text-xs font-mono text-slate-600 break-all leading-relaxed max-h-32 overflow-y-auto custom-scrollbar">
+            <div className="bg-black/30 p-3 rounded-lg border border-border shadow-inner hover:border-primary/50 transition-colors">
+              <p className="text-xs font-mono text-muted-foreground break-all leading-relaxed max-h-32 overflow-y-auto custom-scrollbar">
                 {signature}
               </p>
             </div>

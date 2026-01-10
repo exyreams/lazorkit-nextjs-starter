@@ -62,10 +62,10 @@ export function WalletInfo() {
 
   if (!wallet) {
     return (
-      <Card className="flex flex-col items-center justify-center py-12 border-dashed border-2 border-slate-200 bg-slate-50/50">
-        <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm border border-slate-100">
+      <Card className="flex flex-col items-center justify-center py-12 border-dashed border-2 border-border bg-muted/10">
+        <div className="w-16 h-16 bg-muted/30 rounded-full flex items-center justify-center mb-4 shadow-inner border border-border">
           <svg
-            className="w-8 h-8 text-slate-300"
+            className="w-8 h-8 text-muted-foreground/50"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -78,7 +78,7 @@ export function WalletInfo() {
             />
           </svg>
         </div>
-        <p className="text-slate-600 font-medium">
+        <p className="text-muted-foreground font-medium font-mono">
           Connect wallet to view details
         </p>
       </Card>
@@ -88,23 +88,23 @@ export function WalletInfo() {
   return (
     <Card className="relative overflow-hidden group">
       {/* Decorative gradients */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-400/20 to-cyan-300/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+      <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-primary/10 to-blue-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
 
       <div className="relative z-10 flex justify-between items-start mb-6">
         <div>
-          <h2 className="text-lg font-bold text-slate-900">Wallet Overview</h2>
-          <p className="text-xs text-slate-500">Manage your smart account</p>
+          <h2 className="text-lg font-bold text-foreground font-mono">Wallet Overview</h2>
+          <p className="text-xs text-muted-foreground font-mono">Manage your smart account</p>
         </div>
         <Button
           variant="ghost"
           size="sm"
           onClick={handleRefresh}
           disabled={loading}
-          className="rounded-full w-8 h-8 p-0"
+          className="rounded-full w-8 h-8 p-0 hover:bg-muted/50"
           title="Refresh balance"
         >
           <svg
-            className={`w-4 h-4 text-slate-500 ${loading ? "animate-spin" : ""}`}
+            className={`w-4 h-4 text-muted-foreground ${loading ? "animate-spin" : ""}`}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -121,15 +121,15 @@ export function WalletInfo() {
 
       <div className="relative z-10 space-y-6">
         {/* Balance Card */}
-        <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-5 text-white shadow-lg shadow-slate-500/10">
-          <p className="text-slate-400 text-xs font-medium mb-1">
+        <div className="bg-gradient-to-br from-muted/50 to-muted/20 rounded-xl p-5 text-foreground shadow-lg shadow-black/20 border border-border/50">
+          <p className="text-muted-foreground text-xs font-medium mb-1 font-mono uppercase tracking-wider">
             Total Balance
           </p>
           <div className="flex items-baseline gap-2">
             {loading ? (
-              <div className="h-8 w-32 bg-slate-700/50 rounded animate-pulse"></div>
+              <div className="h-8 w-32 bg-muted/50 rounded animate-pulse"></div>
             ) : (
-              <h3 className="text-3xl font-bold tracking-tight">
+              <h3 className="text-3xl font-bold tracking-tight font-mono">
                 {balance !== null
                   ? balance.toLocaleString(undefined, {
                       minimumFractionDigits: 2,
@@ -138,29 +138,29 @@ export function WalletInfo() {
                   : "---"}
               </h3>
             )}
-            <span className="text-slate-400 font-semibold text-sm">SOL</span>
+            <span className="text-muted-foreground font-semibold text-sm font-mono">SOL</span>
           </div>
         </div>
 
         {/* Address Info */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider font-mono">
               Smart Account
             </span>
             <Badge variant="success">Active</Badge>
           </div>
           <div
             onClick={copyToClipboard}
-            className="flex items-center justify-between p-3 bg-white/50 border border-slate-200 rounded-lg hover:border-slate-300 hover:bg-white cursor-pointer transition-all group/address"
+            className="flex items-center justify-between p-3 bg-muted/20 border border-border rounded-lg hover:border-primary/50 hover:bg-muted/30 cursor-pointer transition-all group/address"
           >
-            <span className="font-mono text-sm text-slate-700 truncate mr-4">
+            <span className="font-mono text-sm text-muted-foreground truncate mr-4">
               {wallet.smartWallet}
             </span>
-            <span className="text-slate-400 group-hover/address:text-blue-500 transition-colors">
+            <span className="text-muted-foreground group-hover/address:text-primary transition-colors">
               {copied ? (
                 <svg
-                  className="w-4 h-4 text-emerald-500"
+                  className="w-4 h-4 text-green-500"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -193,11 +193,11 @@ export function WalletInfo() {
 
         {/* Device Info */}
         <div className="grid grid-cols-2 gap-3">
-          <div className="p-3 rounded-lg border border-slate-100 bg-slate-50/50">
-            <p className="text-xs text-slate-500 mb-1">Platform</p>
-            <p className="text-sm font-semibold text-slate-900 capitalize flex items-center gap-1.5">
+          <div className="p-3 rounded-lg border border-border bg-muted/20">
+            <p className="text-xs text-muted-foreground mb-1 font-mono uppercase">Platform</p>
+            <p className="text-sm font-semibold text-foreground capitalize flex items-center gap-1.5 font-mono">
               <svg
-                className="w-4 h-4 text-slate-400"
+                className="w-4 h-4 text-muted-foreground"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -212,11 +212,11 @@ export function WalletInfo() {
               {wallet.platform}
             </p>
           </div>
-          <div className="p-3 rounded-lg border border-slate-100 bg-slate-50/50">
-            <p className="text-xs text-slate-500 mb-1">Passkey</p>
-            <p className="text-sm font-semibold text-slate-900 flex items-center gap-1.5">
+          <div className="p-3 rounded-lg border border-border bg-muted/20">
+            <p className="text-xs text-muted-foreground mb-1 font-mono uppercase">Passkey</p>
+            <p className="text-sm font-semibold text-foreground flex items-center gap-1.5 font-mono">
               <svg
-                className="w-4 h-4 text-slate-400"
+                className="w-4 h-4 text-muted-foreground"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"

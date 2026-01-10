@@ -11,7 +11,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="space-y-1.5 font-sans">
         {label && (
-          <label className="block text-sm font-medium text-slate-700 ml-1">
+          <label className="block text-xs font-mono text-muted-foreground ml-1 uppercase tracking-wider">
             {label}
           </label>
         )}
@@ -19,11 +19,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           <input
             ref={ref}
             className={`
-              w-full bg-white px-4 py-3 rounded-xl border-2 border-slate-200 
-              text-slate-900 placeholder:text-slate-400
-              focus:border-blue-500 focus:ring-0 focus:outline-none transition-all duration-200
-              disabled:bg-slate-50 disabled:text-slate-500
-              ${error ? "border-red-400 focus:border-red-500" : "group-hover:border-slate-300"}
+              w-full bg-muted/50 px-4 py-3 rounded-lg border border-border 
+              text-foreground placeholder:text-muted-foreground
+              focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-all duration-200
+              disabled:opacity-50 disabled:cursor-not-allowed
+              ${error ? "border-red-500 focus:border-red-500" : "group-hover:border-muted-foreground/50"}
               ${rightElement ? "pr-12" : ""}
               ${className}
             `}
@@ -31,13 +31,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             {...props}
           />
           {rightElement && (
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none">
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none">
               {rightElement}
             </div>
           )}
         </div>
         {error && (
-          <p className="text-sm text-red-500 ml-1 animate-enter">{error}</p>
+          <p className="text-xs text-red-500 ml-1 animate-enter font-mono">{error}</p>
         )}
       </div>
     );

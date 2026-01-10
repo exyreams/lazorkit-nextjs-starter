@@ -6,10 +6,10 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 
 export const Card = forwardRef<HTMLDivElement, CardProps>(
   ({ className = "", variant = "default", children, ...props }, ref) => {
-    const baseStyles = "glass-panel rounded-xl p-6 transition-all duration-300";
+    const baseStyles = "bg-card text-card-foreground border border-border rounded-xl p-6 transition-all duration-300";
     const hoverStyles =
       variant === "hover"
-        ? "hover:shadow-xl hover:shadow-blue-500/5 hover:-translate-y-1"
+        ? "hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5"
         : "";
 
     return (

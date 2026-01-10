@@ -1,46 +1,67 @@
 @import "tailwindcss";
 
 :root {
-  /* Crystal Clear Palette - Electric Blue & Clean Slate */
-  --background: #f8fafc; /* Slate 50 */
-  --foreground: #0f172a; /* Slate 900 */
+  color-scheme: dark;
   
-  /* Primary - Electric Blue */
-  --primary: #2563eb;
-  --primary-foreground: #ffffff;
-  --primary-gradient: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+  /* Aegis Dark Theme - OKLCH */
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
   
-  /* Success - Cyan/Teal */
-  --success: #0d9488;
-  --success-foreground: #ffffff;
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
   
-  /* Glass Effects */
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.5);
-  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  
+  --border: oklch(1 0 0 / 10%);
+  
+  /* Accents */
+  --blue-500: #3b82f6;
+  --indigo-500: #6366f1;
+  --green-500: #22c55e;
+  --red-500: #ef4444;
+  --amber-500: #f59e0b;
+  --cyan-500: #06b6d4;
+
+  /* Glass Effects - Adjusted for Dark */
+  --glass-bg: oklch(0.205 0 0 / 0.7);
+  --glass-border: oklch(1 0 0 / 0.1);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+
+  /* Font mapping */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-
-
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+  
+  /* Grid Background */
   background-image: 
-    radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.1) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, rgba(14, 165, 233, 0.1) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(37, 99, 235, 0.05) 0px, transparent 50%),
-    radial-gradient(at 0% 100%, rgba(14, 165, 233, 0.05) 0px, transparent 50%);
-  background-attachment: fixed;
+    linear-gradient(to right, #80808012 1px, transparent 1px),
+    linear-gradient(to bottom, #80808012 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(ellipse 80% 50% at 50% 50%, #000 70%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 50% at 50% 50%, #000 70%, transparent 100%);
+  min-height: 100vh;
+  margin: 0;
 }
 
 /* Glassmorphism Utilities */
@@ -50,13 +71,6 @@ body {
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow);
-}
-
-.text-gradient {
-  background: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }
 
 /* Animations */
@@ -75,16 +89,7 @@ body {
   animation: slide-up-fade 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@keyframes pulse-soft {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
-}
-
-.animate-pulse-soft {
-  animation: pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-/* Custom Scrollbar */
+/* Custom Scrollbar - Dark */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -92,9 +97,9 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--muted);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: var(--muted-foreground);
 }
