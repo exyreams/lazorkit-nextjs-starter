@@ -17,13 +17,13 @@ export function ConnectButton() {
   if (isConnected && wallet) {
     return (
       <div className="flex items-center gap-3">
-        <div className="hidden sm:flex items-center gap-2 pl-2 pr-1 py-1 bg-white/50 backdrop-blur-sm border border-slate-200 rounded-full shadow-sm">
+        <div className="hidden sm:flex items-center gap-2 pl-2 pr-1 py-1 bg-muted/50 backdrop-blur-sm border border-border rounded-full">
           <div className="flex items-center gap-2 px-2">
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
             </span>
-            <span className="text-sm font-mono font-medium text-slate-700">
+            <span className="text-sm font-mono font-medium text-foreground">
               {wallet.smartWallet.slice(0, 4)}...{wallet.smartWallet.slice(-4)}
             </span>
           </div>
@@ -35,7 +35,7 @@ export function ConnectButton() {
           variant="ghost"
           size="sm"
           onClick={() => disconnect()}
-          className="text-red-500 hover:text-red-600 hover:bg-red-50"
+          className="text-red-500 hover:text-red-400 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 transition-all"
         >
           Disconnect
         </Button>
@@ -48,7 +48,7 @@ export function ConnectButton() {
     <Button
       onClick={() => connect()}
       isLoading={isConnecting}
-      className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 shadow-blue-500/25"
+      className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20"
     >
       {isConnecting ? "Authenticating..." : "Connect Wallet"}
     </Button>

@@ -5,14 +5,13 @@ import { USDCTransferForm } from "@/components/USDCTransferForm";
 import { SignMessage } from "@/components/SignMessage";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import Image from "next/image";
-import Link from "next/link";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 export default function Home() {
   return (
     <div className="min-h-screen pb-20 relative overflow-hidden">
       {/* Floating Navbar */}
-      <nav className="fixed top-6 left-1/2 -translate-x-1/2 w-[95%] max-w-5xl z-50 glass-panel rounded-full px-6 py-3 flex items-center justify-between">
+      <nav className="absolute top-6 left-1/2 -translate-x-1/2 w-[95%] max-w-5xl z-50 bg-card/80 backdrop-blur-xl border border-border rounded-full px-6 py-3 flex items-center justify-between shadow-lg shadow-black/20">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 flex items-center justify-center rounded-lg bg-primary/10 border border-primary/20 shadow-[0_0_15px_rgba(239,68,68,0.2)]">
             <span className="text-primary font-bold">L</span>
@@ -23,7 +22,7 @@ export default function Home() {
         </div>
 
         <div className="hidden md:flex items-center gap-6">
-          {["Features", "Demo", "Docs"].map((item) => (
+          {["Features", "Demo"].map((item) => (
             <a
               key={item}
               href={`#${item.toLowerCase()}`}
@@ -35,25 +34,7 @@ export default function Home() {
         </div>
 
         <div className="flex items-center gap-3">
-          <Link
-            href="/docs"
-            className="hidden sm:flex items-center gap-2 text-sm font-bold font-mono text-muted-foreground hover:text-foreground transition-colors uppercase tracking-wider"
-          >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-              />
-            </svg>
-            Docs
-          </Link>
+          <ThemeToggle />
           <ConnectButton />
         </div>
       </nav>
@@ -84,9 +65,10 @@ export default function Home() {
           </h1>
 
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed font-light">
-            Forget seed phrases. Authenticate with <strong className="text-foreground">FaceID</strong> &{" "}
-            <strong className="text-foreground">TouchID</strong>. Experience gasless transactions and
-            instant onboarding on Solana.
+            Forget seed phrases. Authenticate with{" "}
+            <strong className="text-foreground">FaceID</strong> &{" "}
+            <strong className="text-foreground">TouchID</strong>. Experience
+            gasless transactions and instant onboarding on Solana.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -107,7 +89,10 @@ export default function Home() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-24">
         {/* Features Cards */}
         <section id="features" className="grid md:grid-cols-3 gap-6">
-          <Card variant="hover" className="border-l-4 border-l-blue-500 rounded-lg">
+          <Card
+            variant="hover"
+            className="border-l-4 border-l-blue-500 rounded-lg"
+          >
             <div className="w-12 h-12 bg-blue-500/10 rounded-lg flex items-center justify-center mb-4 text-blue-500 font-mono text-xs border border-blue-500/20">
               BIO_AUTH
             </div>
@@ -120,7 +105,10 @@ export default function Home() {
             </p>
           </Card>
 
-          <Card variant="hover" className="border-l-4 border-l-indigo-500 rounded-lg">
+          <Card
+            variant="hover"
+            className="border-l-4 border-l-indigo-500 rounded-lg"
+          >
             <div className="w-12 h-12 bg-indigo-500/10 rounded-lg flex items-center justify-center mb-4 text-indigo-500 font-mono text-xs border border-indigo-500/20">
               GAS_LESS
             </div>
@@ -133,7 +121,10 @@ export default function Home() {
             </p>
           </Card>
 
-          <Card variant="hover" className="border-l-4 border-l-cyan-500 rounded-lg">
+          <Card
+            variant="hover"
+            className="border-l-4 border-l-cyan-500 rounded-lg"
+          >
             <div className="w-12 h-12 bg-cyan-500/10 rounded-lg flex items-center justify-center mb-4 text-cyan-500 font-mono text-xs border border-cyan-500/20">
               SMART_ACC
             </div>
@@ -155,7 +146,7 @@ export default function Home() {
                 Interactive Demo
               </h2>
               <p className="text-muted-foreground font-mono text-sm">
-                // Try out the gasless transactions on Solana Devnet
+                {"//"} Try out the gasless transactions on Solana Devnet
               </p>
             </div>
             <div className="hidden sm:block">
@@ -201,12 +192,15 @@ export default function Home() {
               <a
                 href="https://github.com/lazor-kit/lazor-kit"
                 target="_blank"
+                rel="noopener"
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 <svg
                   className="w-6 h-6"
                   fill="currentColor"
                   viewBox="0 0 24 24"
+                  aria-label="GitHub"
+                  role="img"
                 >
                   <path
                     fillRule="evenodd"
@@ -219,11 +213,14 @@ export default function Home() {
                 href="https://twitter.com"
                 target="_blank"
                 className="text-muted-foreground hover:text-blue-400 transition-colors"
+                rel="noopener"
               >
                 <svg
                   className="w-6 h-6"
                   fill="currentColor"
                   viewBox="0 0 24 24"
+                  aria-label="Twitter"
+                  role="img"
                 >
                   <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
                 </svg>
