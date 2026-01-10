@@ -1,11 +1,11 @@
 "use client";
 
 import { useWallet } from "@lazorkit/wallet";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Connection, LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
+import { RefreshCw } from "lucide-react";
 
 /**
  * WalletInfo Component
@@ -14,23 +14,22 @@ import { Button } from "@/components/ui/Button";
 export function WalletInfo() {
   const { wallet, smartWalletPubkey } = useWallet();
   const [balance, setBalance] = useState<number | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [copied, setCopied] = useState(false);
+  const hasFetchedRef = useRef(false);
 
-  // Fetch balance when wallet is connected
+  // Fetch balance when wallet is connected (only once per session)
   useEffect(() => {
-    if (!smartWalletPubkey) return;
+    if (!smartWalletPubkey || hasFetchedRef.current) return;
 
     const fetchBalance = async () => {
-      setLoading(true);
       try {
         const connection = new Connection("https://api.devnet.solana.com");
         const balanceLamports = await connection.getBalance(smartWalletPubkey);
         setBalance(balanceLamports / LAMPORTS_PER_SOL);
+        hasFetchedRef.current = true;
       } catch (error) {
         console.error("Failed to fetch balance:", error);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -40,7 +39,7 @@ export function WalletInfo() {
   const handleRefresh = async () => {
     if (!smartWalletPubkey) return;
 
-    setLoading(true);
+    setIsRefreshing(true);
     try {
       const connection = new Connection("https://api.devnet.solana.com");
       const balanceLamports = await connection.getBalance(smartWalletPubkey);
@@ -48,7 +47,7 @@ export function WalletInfo() {
     } catch (error) {
       console.error("Failed to fetch balance:", error);
     } finally {
-      setLoading(false);
+      setIsRefreshing(false);
     }
   };
 
@@ -69,6 +68,7 @@ export function WalletInfo() {
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
+            aria-hidden="true"
           >
             <path
               strokeLinecap="round"
@@ -85,6 +85,9 @@ export function WalletInfo() {
     );
   }
 
+  // Only show skeleton on initial load, not during refresh
+  const showSkeleton = balance === null;
+
   return (
     <Card className="relative overflow-hidden group">
       {/* Decorative gradients */}
@@ -92,31 +95,24 @@ export function WalletInfo() {
 
       <div className="relative z-10 flex justify-between items-start mb-6">
         <div>
-          <h2 className="text-lg font-bold text-foreground font-mono">Wallet Overview</h2>
-          <p className="text-xs text-muted-foreground font-mono">Manage your smart account</p>
+          <h2 className="text-lg font-bold text-foreground font-mono">
+            Wallet Overview
+          </h2>
+          <p className="text-xs text-muted-foreground font-mono">
+            Manage your smart account
+          </p>
         </div>
-        <Button
-          variant="ghost"
-          size="sm"
+        <button
+          type="button"
           onClick={handleRefresh}
-          disabled={loading}
-          className="rounded-full w-8 h-8 p-0 hover:bg-muted/50"
-          title="Refresh balance"
+          disabled={isRefreshing}
+          className="flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground hover:bg-muted/30 rounded-lg transition-all disabled:opacity-50 cursor-pointer"
         >
-          <svg
-            className={`w-4 h-4 text-muted-foreground ${loading ? "animate-spin" : ""}`}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-            />
-          </svg>
-        </Button>
+          <RefreshCw
+            className={`w-3 h-3 ${isRefreshing ? "animate-spin" : ""}`}
+          />
+          Refresh
+        </button>
       </div>
 
       <div className="relative z-10 space-y-6">
@@ -126,10 +122,12 @@ export function WalletInfo() {
             Total Balance
           </p>
           <div className="flex items-baseline gap-2">
-            {loading ? (
+            {showSkeleton ? (
               <div className="h-8 w-32 bg-muted/50 rounded animate-pulse"></div>
             ) : (
-              <h3 className="text-3xl font-bold tracking-tight font-mono">
+              <h3
+                className={`text-3xl font-bold tracking-tight font-mono ${isRefreshing ? "opacity-50" : ""}`}
+              >
                 {balance !== null
                   ? balance.toLocaleString(undefined, {
                       minimumFractionDigits: 2,
@@ -138,7 +136,9 @@ export function WalletInfo() {
                   : "---"}
               </h3>
             )}
-            <span className="text-muted-foreground font-semibold text-sm font-mono">SOL</span>
+            <span className="text-muted-foreground font-semibold text-sm font-mono">
+              SOL
+            </span>
           </div>
         </div>
 
@@ -150,9 +150,10 @@ export function WalletInfo() {
             </span>
             <Badge variant="success">Active</Badge>
           </div>
-          <div
+          <button
+            type="button"
             onClick={copyToClipboard}
-            className="flex items-center justify-between p-3 bg-muted/20 border border-border rounded-lg hover:border-primary/50 hover:bg-muted/30 cursor-pointer transition-all group/address"
+            className="w-full flex items-center justify-between p-3 bg-muted/20 border border-border rounded-lg hover:border-primary/50 hover:bg-muted/30 cursor-pointer transition-all group/address"
           >
             <span className="font-mono text-sm text-muted-foreground truncate mr-4">
               {wallet.smartWallet}
@@ -164,6 +165,7 @@ export function WalletInfo() {
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
+                  aria-hidden="true"
                 >
                   <path
                     strokeLinecap="round"
@@ -178,6 +180,7 @@ export function WalletInfo() {
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
+                  aria-hidden="true"
                 >
                   <path
                     strokeLinecap="round"
@@ -188,19 +191,22 @@ export function WalletInfo() {
                 </svg>
               )}
             </span>
-          </div>
+          </button>
         </div>
 
         {/* Device Info */}
         <div className="grid grid-cols-2 gap-3">
           <div className="p-3 rounded-lg border border-border bg-muted/20">
-            <p className="text-xs text-muted-foreground mb-1 font-mono uppercase">Platform</p>
+            <p className="text-xs text-muted-foreground mb-1 font-mono uppercase">
+              Platform
+            </p>
             <p className="text-sm font-semibold text-foreground capitalize flex items-center gap-1.5 font-mono">
               <svg
                 className="w-4 h-4 text-muted-foreground"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
+                aria-hidden="true"
               >
                 <path
                   strokeLinecap="round"
@@ -213,13 +219,16 @@ export function WalletInfo() {
             </p>
           </div>
           <div className="p-3 rounded-lg border border-border bg-muted/20">
-            <p className="text-xs text-muted-foreground mb-1 font-mono uppercase">Passkey</p>
+            <p className="text-xs text-muted-foreground mb-1 font-mono uppercase">
+              Passkey
+            </p>
             <p className="text-sm font-semibold text-foreground flex items-center gap-1.5 font-mono">
               <svg
                 className="w-4 h-4 text-muted-foreground"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
+                aria-hidden="true"
               >
                 <path
                   strokeLinecap="round"

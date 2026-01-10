@@ -293,7 +293,7 @@ export default function Home() {
                     type="button"
                     onClick={() => setActiveTab("sol")}
                     className={`
-                      relative z-10 flex-1 flex items-center justify-center gap-2 py-3 px-4 text-xs font-mono font-bold uppercase tracking-wider transition-colors rounded-xl
+                      relative z-10 flex-1 flex items-center justify-center gap-2 py-3 px-4 text-xs font-mono font-bold uppercase tracking-wider transition-colors rounded-xl cursor-pointer
                       ${activeTab === "sol" ? "text-primary" : "text-muted-foreground hover:text-foreground"}
                     `}
                   >
@@ -306,7 +306,7 @@ export default function Home() {
                     type="button"
                     onClick={() => setActiveTab("usdc")}
                     className={`
-                      relative z-10 flex-1 flex items-center justify-center gap-2 py-3 px-4 text-xs font-mono font-bold uppercase tracking-wider transition-colors rounded-xl
+                      relative z-10 flex-1 flex items-center justify-center gap-2 py-3 px-4 text-xs font-mono font-bold uppercase tracking-wider transition-colors rounded-xl cursor-pointer
                       ${activeTab === "usdc" ? "text-primary" : "text-muted-foreground hover:text-foreground"}
                     `}
                   >
@@ -322,7 +322,7 @@ export default function Home() {
                     type="button"
                     onClick={() => setActiveTab("sign")}
                     className={`
-                      relative z-10 flex-1 flex items-center justify-center gap-2 py-3 px-4 text-xs font-mono font-bold uppercase tracking-wider transition-colors rounded-xl
+                      relative z-10 flex-1 flex items-center justify-center gap-2 py-3 px-4 text-xs font-mono font-bold uppercase tracking-wider transition-colors rounded-xl cursor-pointer
                       ${activeTab === "sign" ? "text-primary" : "text-muted-foreground hover:text-foreground"}
                     `}
                   >
@@ -338,7 +338,7 @@ export default function Home() {
                     type="button"
                     onClick={() => setActiveTab("activity")}
                     className={`
-                      relative z-10 flex-1 flex items-center justify-center gap-2 py-3 px-4 text-xs font-mono font-bold uppercase tracking-wider transition-colors rounded-xl
+                      relative z-10 flex-1 flex items-center justify-center gap-2 py-3 px-4 text-xs font-mono font-bold uppercase tracking-wider transition-colors rounded-xl cursor-pointer
                       ${activeTab === "activity" ? "text-primary" : "text-muted-foreground hover:text-foreground"}
                     `}
                   >
