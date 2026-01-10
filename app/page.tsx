@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { ConnectButton } from "@/components/ConnectButton";
 import { WalletInfo } from "@/components/WalletInfo";
 import { TransferForm } from "@/components/TransferForm";
@@ -13,17 +13,80 @@ import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { Send, CircleDollarSign, PenTool, Activity } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 
-export default function Home() {
-  const [activeTab, setActiveTab] = useState<
-    "sol" | "usdc" | "sign" | "activity"
-  >("sol");
+type TabType = "sol" | "usdc" | "sign" | "activity";
 
-  const tabs = [
-    { id: "sol", label: "Send SOL", icon: Send },
-    { id: "usdc", label: "Send USDC", icon: CircleDollarSign },
-    { id: "sign", label: "Sign Message", icon: PenTool },
-    { id: "activity", label: "Activity", icon: Activity },
-  ] as const;
+export default function Home() {
+  const [activeTab, setActiveTab] = useState<TabType>("sol");
+
+  // Refs for sliding tab indicator
+  const tabsRef = useRef<HTMLDivElement>(null);
+  const solTabRef = useRef<HTMLButtonElement>(null);
+  const usdcTabRef = useRef<HTMLButtonElement>(null);
+  const signTabRef = useRef<HTMLButtonElement>(null);
+  const activityTabRef = useRef<HTMLButtonElement>(null);
+
+  const tabRefs = {
+    sol: solTabRef,
+    usdc: usdcTabRef,
+    sign: signTabRef,
+    activity: activityTabRef,
+  };
+
+  const [tabPosition, setTabPosition] = useState({ left: 0, width: 0 });
+  const [hasInitialized, setHasInitialized] = useState(false);
+
+  // Initialize tab position on mount
+  useEffect(() => {
+    const initializeTabPosition = () => {
+      const currentTab = solTabRef.current;
+      if (currentTab && tabsRef.current) {
+        const tabsRect = tabsRef.current.getBoundingClientRect();
+        const activeRect = currentTab.getBoundingClientRect();
+        setTabPosition({
+          left: activeRect.left - tabsRect.left,
+          width: activeRect.width,
+        });
+        setHasInitialized(true);
+      }
+    };
+
+    // Run immediately and also after a short delay to ensure DOM is ready
+    initializeTabPosition();
+    const timer = setTimeout(initializeTabPosition, 50);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Update tab position when active tab changes
+  useEffect(() => {
+    const updateTabPosition = () => {
+      const currentTab = tabRefs[activeTab]?.current;
+      if (currentTab && tabsRef.current) {
+        const tabsRect = tabsRef.current.getBoundingClientRect();
+        const activeRect = currentTab.getBoundingClientRect();
+        setTabPosition({
+          left: activeRect.left - tabsRect.left,
+          width: activeRect.width,
+        });
+      }
+    };
+
+    const timer1 = setTimeout(updateTabPosition, 50);
+    const timer2 = setTimeout(updateTabPosition, 100);
+
+    let resizeTimeout: NodeJS.Timeout;
+    const debouncedResize = () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(updateTabPosition, 150);
+    };
+
+    window.addEventListener("resize", debouncedResize);
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(resizeTimeout);
+      window.removeEventListener("resize", debouncedResize);
+    };
+  }, [activeTab, tabRefs[activeTab]?.current]);
 
   return (
     <div className="min-h-screen pb-20 relative overflow-hidden">
@@ -200,28 +263,91 @@ export default function Home() {
             <div className="lg:col-span-8">
               <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-2xl shadow-black/40">
                 {/* Console Header / Tabs */}
-                <div className="flex items-center p-1 bg-muted/30 border-b border-border">
-                  {tabs.map((tab) => (
-                    <button
-                      key={tab.id}
-                      type="button"
-                      onClick={() => setActiveTab(tab.id as any)}
-                      className={`
-                        flex-1 flex items-center justify-center gap-2 py-3 px-4 text-xs font-mono font-bold uppercase tracking-wider transition-all
-                        ${
-                          activeTab === tab.id
-                            ? "bg-card text-primary shadow-sm rounded-xl border border-border"
-                            : "text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-xl"
-                        }
-                      `}
-                    >
-                      <tab.icon
-                        className="w-4 h-4 opacity-70"
-                        aria-hidden="true"
-                      />
-                      <span className="hidden sm:inline">{tab.label}</span>
-                    </button>
-                  ))}
+                <div
+                  ref={tabsRef}
+                  className="relative flex items-center p-1 bg-muted/30 border-b border-border"
+                >
+                  {/* Sliding Tab Indicator */}
+                  {hasInitialized && (
+                    <motion.div
+                      className="absolute rounded-xl bg-card border border-border shadow-sm"
+                      style={{
+                        top: 4,
+                        bottom: 4,
+                      }}
+                      initial={false}
+                      animate={{
+                        left: tabPosition.left,
+                        width: tabPosition.width,
+                      }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 400,
+                        damping: 30,
+                      }}
+                    />
+                  )}
+
+                  <button
+                    ref={solTabRef}
+                    type="button"
+                    onClick={() => setActiveTab("sol")}
+                    className={`
+                      relative z-10 flex-1 flex items-center justify-center gap-2 py-3 px-4 text-xs font-mono font-bold uppercase tracking-wider transition-colors rounded-xl
+                      ${activeTab === "sol" ? "text-primary" : "text-muted-foreground hover:text-foreground"}
+                    `}
+                  >
+                    <Send className="w-4 h-4 opacity-70" aria-hidden="true" />
+                    <span className="hidden sm:inline">Send SOL</span>
+                  </button>
+
+                  <button
+                    ref={usdcTabRef}
+                    type="button"
+                    onClick={() => setActiveTab("usdc")}
+                    className={`
+                      relative z-10 flex-1 flex items-center justify-center gap-2 py-3 px-4 text-xs font-mono font-bold uppercase tracking-wider transition-colors rounded-xl
+                      ${activeTab === "usdc" ? "text-primary" : "text-muted-foreground hover:text-foreground"}
+                    `}
+                  >
+                    <CircleDollarSign
+                      className="w-4 h-4 opacity-70"
+                      aria-hidden="true"
+                    />
+                    <span className="hidden sm:inline">Send USDC</span>
+                  </button>
+
+                  <button
+                    ref={signTabRef}
+                    type="button"
+                    onClick={() => setActiveTab("sign")}
+                    className={`
+                      relative z-10 flex-1 flex items-center justify-center gap-2 py-3 px-4 text-xs font-mono font-bold uppercase tracking-wider transition-colors rounded-xl
+                      ${activeTab === "sign" ? "text-primary" : "text-muted-foreground hover:text-foreground"}
+                    `}
+                  >
+                    <PenTool
+                      className="w-4 h-4 opacity-70"
+                      aria-hidden="true"
+                    />
+                    <span className="hidden sm:inline">Sign Message</span>
+                  </button>
+
+                  <button
+                    ref={activityTabRef}
+                    type="button"
+                    onClick={() => setActiveTab("activity")}
+                    className={`
+                      relative z-10 flex-1 flex items-center justify-center gap-2 py-3 px-4 text-xs font-mono font-bold uppercase tracking-wider transition-colors rounded-xl
+                      ${activeTab === "activity" ? "text-primary" : "text-muted-foreground hover:text-foreground"}
+                    `}
+                  >
+                    <Activity
+                      className="w-4 h-4 opacity-70"
+                      aria-hidden="true"
+                    />
+                    <span className="hidden sm:inline">Activity</span>
+                  </button>
                 </div>
 
                 {/* Console Body */}
