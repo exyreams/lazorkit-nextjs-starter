@@ -10,6 +10,8 @@ import { ActivityLog } from "@/components/ActivityLog";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { Send, CircleDollarSign, PenTool, Activity } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<
@@ -17,10 +19,10 @@ export default function Home() {
   >("sol");
 
   const tabs = [
-    { id: "sol", label: "Send SOL", icon: "⏓" },
-    { id: "usdc", label: "Send USDC", icon: "＄" },
-    { id: "sign", label: "Sign Message", icon: "✎" },
-    { id: "activity", label: "Activity", icon: "☵" },
+    { id: "sol", label: "Send SOL", icon: Send },
+    { id: "usdc", label: "Send USDC", icon: CircleDollarSign },
+    { id: "sign", label: "Sign Message", icon: PenTool },
+    { id: "activity", label: "Activity", icon: Activity },
   ] as const;
 
   return (
@@ -203,7 +205,7 @@ export default function Home() {
                     <button
                       key={tab.id}
                       type="button"
-                      onClick={() => setActiveTab(tab.id)}
+                      onClick={() => setActiveTab(tab.id as any)}
                       className={`
                         flex-1 flex items-center justify-center gap-2 py-3 px-4 text-xs font-mono font-bold uppercase tracking-wider transition-all
                         ${
@@ -213,22 +215,31 @@ export default function Home() {
                         }
                       `}
                     >
-                      <span className="opacity-70" aria-hidden="true">
-                        {tab.icon}
-                      </span>
-                      {tab.label}
+                      <tab.icon
+                        className="w-4 h-4 opacity-70"
+                        aria-hidden="true"
+                      />
+                      <span className="hidden sm:inline">{tab.label}</span>
                     </button>
                   ))}
                 </div>
 
                 {/* Console Body */}
-                <div className="p-8 min-h-[400px]">
-                  <div className="animate-enter" key={activeTab}>
-                    {activeTab === "sol" && <TransferForm />}
-                    {activeTab === "usdc" && <USDCTransferForm />}
-                    {activeTab === "sign" && <SignMessage />}
-                    {activeTab === "activity" && <ActivityLog />}
-                  </div>
+                <div className="p-8 min-h-[400px] relative">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={activeTab}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      {activeTab === "sol" && <TransferForm />}
+                      {activeTab === "usdc" && <USDCTransferForm />}
+                      {activeTab === "sign" && <SignMessage />}
+                      {activeTab === "activity" && <ActivityLog />}
+                    </motion.div>
+                  </AnimatePresence>
                 </div>
 
                 {/* Console Footer */}
