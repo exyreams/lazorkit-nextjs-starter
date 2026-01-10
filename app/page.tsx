@@ -10,7 +10,15 @@ import { ActivityLog } from "@/components/ActivityLog";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
-import { Send, CircleDollarSign, PenTool, Activity } from "lucide-react";
+import {
+  Send,
+  CircleDollarSign,
+  PenTool,
+  Activity,
+  Fingerprint,
+  Zap,
+  Bot,
+} from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 
 type TabType = "sol" | "usdc" | "sign" | "activity";
@@ -169,53 +177,62 @@ export default function Home() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-24">
         {/* Features Cards */}
         <section id="features" className="grid md:grid-cols-3 gap-6">
-          <Card
-            variant="hover"
-            className="border-l-4 border-l-blue-500 rounded-lg"
-          >
-            <div className="w-12 h-12 bg-blue-500/10 rounded-lg flex items-center justify-center mb-4 text-blue-500 font-mono text-xs border border-blue-500/20">
-              BIO_AUTH
-            </div>
-            <h3 className="text-lg font-bold text-foreground mb-2 font-mono">
-              Biometric Auth
-            </h3>
-            <p className="text-muted-foreground leading-relaxed text-sm">
-              Login utilizing secure passkeys powered by your device's secure
-              enclave. No mnemonics.
-            </p>
-          </Card>
+          {/* Card 1: Biometric Auth */}
+          <div className="group relative p-6 rounded-2xl bg-card border border-border shadow-sm hover:border-blue-500/50 transition-all duration-500 hover:shadow-[0_0_40px_-10px_rgba(59,130,246,0.3)] hover:-translate-y-1 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-          <Card
-            variant="hover"
-            className="border-l-4 border-l-indigo-500 rounded-lg"
-          >
-            <div className="w-12 h-12 bg-indigo-500/10 rounded-lg flex items-center justify-center mb-4 text-indigo-500 font-mono text-xs border border-indigo-500/20">
-              GAS_LESS
-            </div>
-            <h3 className="text-lg font-bold text-foreground mb-2 font-mono">
-              Gasless Txns
-            </h3>
-            <p className="text-muted-foreground leading-relaxed text-sm">
-              Remove friction by sponsoring user gas fees. Paymaster
-              infrastructure included.
-            </p>
-          </Card>
+            <div className="relative z-10">
+              <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-4 text-blue-500 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500 shadow-[0_0_15px_-3px_rgba(59,130,246,0.3)]">
+                <Fingerprint className="w-6 h-6" />
+              </div>
 
-          <Card
-            variant="hover"
-            className="border-l-4 border-l-cyan-500 rounded-lg"
-          >
-            <div className="w-12 h-12 bg-cyan-500/10 rounded-lg flex items-center justify-center mb-4 text-cyan-500 font-mono text-xs border border-cyan-500/20">
-              SMART_ACC
+              <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-blue-500 transition-colors tracking-tight font-mono">
+                Biometric Auth
+              </h3>
+              <p className="text-muted-foreground text-sm leading-relaxed font-medium">
+                Login utilizing secure passkeys powered by your device's secure
+                enclave. No mnemonics required.
+              </p>
             </div>
-            <h3 className="text-lg font-bold text-foreground mb-2 font-mono">
-              Smart Accounts
-            </h3>
-            <p className="text-muted-foreground leading-relaxed text-sm">
-              Programmable wallets with account recovery, session keys, and
-              automation capabilities.
-            </p>
-          </Card>
+          </div>
+
+          {/* Card 2: Gasless Txns */}
+          <div className="group relative p-6 rounded-2xl bg-card border border-border shadow-sm hover:border-indigo-500/50 transition-all duration-500 hover:shadow-[0_0_40px_-10px_rgba(99,102,241,0.3)] hover:-translate-y-1 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+            <div className="relative z-10">
+              <div className="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-4 text-indigo-500 group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-500 shadow-[0_0_15px_-3px_rgba(99,102,241,0.3)]">
+                <Zap className="w-6 h-6 fill-current" />
+              </div>
+
+              <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-indigo-500 transition-colors tracking-tight font-mono">
+                Gasless Txns
+              </h3>
+              <p className="text-muted-foreground text-sm leading-relaxed font-medium">
+                Remove friction entirely by sponsoring user gas fees. Built-in
+                Paymaster infrastructure included.
+              </p>
+            </div>
+          </div>
+
+          {/* Card 3: Smart Accounts */}
+          <div className="group relative p-6 rounded-2xl bg-card border border-border shadow-sm hover:border-cyan-500/50 transition-all duration-500 hover:shadow-[0_0_40px_-10px_rgba(6,182,212,0.3)] hover:-translate-y-1 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+            <div className="relative z-10">
+              <div className="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mb-4 text-cyan-500 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500 shadow-[0_0_15px_-3px_rgba(6,182,212,0.3)]">
+                <Bot className="w-6 h-6" />
+              </div>
+
+              <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-cyan-500 transition-colors tracking-tight font-mono">
+                Smart Accounts
+              </h3>
+              <p className="text-muted-foreground text-sm leading-relaxed font-medium">
+                Programmable wallets with account recovery, session keys, and
+                powerful automation capabilities.
+              </p>
+            </div>
+          </div>
         </section>
 
         {/* Interactive Demo Section */}
