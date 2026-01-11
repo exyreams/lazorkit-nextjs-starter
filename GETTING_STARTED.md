@@ -8,17 +8,44 @@ This guide will get you up and running with a fully functional Solana app that u
 
 A complete Solana wallet app featuring:
 
-- **Passkey Authentication** - Login with FaceID, TouchID, or Windows Hello
+- **Passkey Authentication** - Sign in with FaceID, TouchID, or Windows Hello
 - **Gasless Transactions** - Send SOL without holding SOL for gas fees
-- **USDC Transfers** - Send tokens with fees paid in USDC
-- **Message Signing** - Cryptographic message verification
-- **Balance Display** - Real-time SOL balance checking
+- **USDC Transfers** - Send SPL tokens with gas paid in USDC
+- **Smart Wallets** - Programmable accounts with recovery support
+- **Message Signing** - Verify ownership without transactions
+- **Session Persistence** - Stay logged in across page refreshes
+- **Real-time Balance** - SOL balance with refresh functionality
+- **Modern UI** - Responsive design with Tailwind CSS
+- **TypeScript** - Fully typed for better developer experience
+- **Comprehensive Docs** - Extensive comments and step-by-step tutorials
 
 ## Prerequisites
 
 - Node.js 18+ installed
 - Modern browser with WebAuthn support (Chrome, Safari, Firefox, Edge)
 - Basic knowledge of React/Next.js (helpful but not required)
+
+## Project Structure
+
+```
+lazorkit-nextjs-starter/
+├── app/
+│   ├── layout.tsx          # Root layout with providers
+│   ├── page.tsx            # Main dashboard page
+│   ├── providers.tsx       # Lazorkit provider configuration
+│   └── globals.css         # Global styles and themes
+├── components/
+│   ├── ConnectButton.tsx   # Wallet connection component
+│   ├── WalletInfo.tsx      # Wallet details and balance
+│   ├── TransferForm.tsx    # SOL transfer form
+│   ├── USDCTransferForm.tsx # USDC transfer form
+│   ├── SignMessage.tsx     # Message signing component
+│   ├── ActivityLog.tsx     # Transaction history
+│   └── ui/                 # Reusable UI components
+├── docs/                   # Step-by-step tutorials
+├── public/                 # Static assets and icons
+└── README.md              # Project overview
+```
 
 ## Step 1: Clone and Install (2 minutes)
 
@@ -69,6 +96,53 @@ You should see ~2 SOL in your wallet balance.
 
 **Note:** Transaction signing requires HTTPS. For full functionality, deploy to production (see Step 6).
 
+## Key Features Demo
+
+### Passkey Authentication
+
+```typescript
+import { useWallet } from "@lazorkit/wallet";
+
+function ConnectButton() {
+  const { connect, isConnected, wallet } = useWallet();
+
+  return (
+    <button onClick={() => connect()}>
+      {isConnected ? `Connected: ${wallet?.smartWallet}` : "Connect"}
+    </button>
+  );
+}
+```
+
+### Gasless SOL Transfer
+
+```typescript
+const { signAndSendTransaction, smartWalletPubkey } = useWallet();
+
+const sendSOL = async () => {
+  const instruction = SystemProgram.transfer({
+    fromPubkey: smartWalletPubkey,
+    toPubkey: new PublicKey(recipient),
+    lamports: 0.1 * LAMPORTS_PER_SOL,
+  });
+
+  const signature = await signAndSendTransaction({
+    instructions: [instruction],
+  });
+};
+```
+
+### Message Signing
+
+```typescript
+const { signMessage } = useWallet();
+
+const sign = async () => {
+  const result = await signMessage("Hello Lazorkit!");
+  console.log("Signature:", result.signature);
+};
+```
+
 ## Step 5: Try Other Features (2 minutes)
 
 ### Message Signing
@@ -87,6 +161,11 @@ You should see ~2 SOL in your wallet balance.
 ## Step 6: Deploy to Production (5 minutes)
 
 For full transaction functionality, deploy to HTTPS:
+
+### HTTPS Requirement
+
+**Development:** Connection and balance checking work on `localhost`
+**Production:** Transaction signing requires HTTPS deployment
 
 ### Option A: Vercel (Recommended)
 
@@ -115,6 +194,28 @@ npm run build
 
 # Deploy to Netlify
 netlify deploy --prod
+```
+
+**Quick Deploy Options:**
+
+- [Deploy to Vercel](https://vercel.com) (recommended)
+- [Deploy to Netlify](https://netlify.com)
+- Any HTTPS-enabled hosting
+
+## Configuration
+
+### Switch to Mainnet
+
+Update `app/providers.tsx`:
+
+```typescript
+const CONFIG = {
+  RPC_URL: "https://api.mainnet-beta.solana.com",
+  PORTAL_URL: "https://portal.lazor.sh",
+  PAYMASTER: {
+    paymasterUrl: "https://kora.mainnet.lazorkit.com",
+  },
+};
 ```
 
 ## Understanding What You Built
@@ -190,7 +291,19 @@ Allow popups for your domain in browser settings.
 
 Make sure you're testing on HTTPS (deployed version) for transaction signing.
 
-## Common Questions
+## FAQ
+
+**Q: Why do transactions fail on localhost?**
+A: WebAuthn requires HTTPS for transaction signing. Deploy to Vercel/Netlify for full functionality.
+
+**Q: How do I get test USDC?**
+A: Use a DEX like Jupiter or Raydium on Devnet to swap SOL for USDC.
+
+**Q: What browsers are supported?**
+A: Chrome, Safari, Firefox, and Edge all support WebAuthn. Mobile browsers work too!
+
+**Q: Where are private keys stored?**
+A: Nowhere! Passkeys use your device's secure enclave. No keys to lose or steal.
 
 **Q: Is this production-ready?**
 A: Yes! This uses the official Lazorkit SDK. Add your features and deploy.
