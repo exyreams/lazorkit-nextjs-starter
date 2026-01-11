@@ -18,6 +18,9 @@ import {
   Fingerprint,
   Zap,
   Bot,
+  Code,
+  Copy,
+  Check,
 } from "lucide-react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "motion/react";
@@ -40,6 +43,12 @@ export default function Home() {
     sign: signTabRef,
     activity: activityTabRef,
   };
+
+  // Refs and state for Mode Toggle sliding indicator
+  const modeTabsRef = useRef<HTMLDivElement>(null);
+  const demoTabRef = useRef<HTMLButtonElement>(null);
+  const codeTabRef = useRef<HTMLButtonElement>(null);
+  const [modeTabPosition, setModeTabPosition] = useState({ left: 0, width: 0 });
 
   const [tabPosition, setTabPosition] = useState({ left: 0, width: 0 });
   const [hasInitialized, setHasInitialized] = useState(false);
@@ -96,6 +105,87 @@ export default function Home() {
       window.removeEventListener("resize", debouncedResize);
     };
   }, [activeTab, tabRefs[activeTab]?.current]);
+
+  // Mode and Copy States
+  const [showCode, setShowCode] = useState(false);
+  const [copiedCode, setCopiedCode] = useState(false);
+
+  // Update mode toggle position
+  useEffect(() => {
+    const updateModePosition = () => {
+      const currentTab = showCode ? codeTabRef.current : demoTabRef.current;
+      if (currentTab && modeTabsRef.current) {
+        const tabsRect = modeTabsRef.current.getBoundingClientRect();
+        const activeRect = currentTab.getBoundingClientRect();
+        setModeTabPosition({
+          left: activeRect.left - tabsRect.left,
+          width: activeRect.width,
+        });
+      }
+    };
+
+    updateModePosition();
+    const timer = setTimeout(updateModePosition, 50);
+
+    window.addEventListener("resize", updateModePosition);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("resize", updateModePosition);
+    };
+  }, [showCode]);
+
+  const snippets: Record<TabType, string> = {
+    sol: `// Send SOL (Gasless)
+const { signAndSendTransaction, smartWalletPubkey } = useWallet();
+
+const handleSend = async () => {
+  const instruction = SystemProgram.transfer({
+    fromPubkey: smartWalletPubkey,
+    toPubkey: new PublicKey(recipient),
+    lamports: amount * LAMPORTS_PER_SOL,
+  });
+
+  // Sponsored by Paymaster automatically
+  const sig = await signAndSendTransaction({
+    instructions: [instruction],
+  });
+};`,
+    usdc: `// Send USDC (Fees paid in USDC)
+const { signAndSendTransaction } = useWallet();
+
+const handleUSDC = async () => {
+  const sig = await signAndSendTransaction({
+    instructions: [tokenTransferInstruction],
+    transactionOptions: {
+      feeToken: "USDC", // Sponsoring gas with USDC
+    },
+  });
+};`,
+    sign: `// Off-chain Message Signing
+const { signMessage } = useWallet();
+
+const handleSign = async () => {
+  const { signature } = await signMessage(
+    "Authenticating with Lazorkit"
+  );
+};`,
+    activity: `// Fetch Smart Wallet History
+const { wallet } = useWallet();
+
+const fetchHistory = async () => {
+  const conn = new Connection(RPC_URL);
+  const history = await conn.getSignaturesForAddress(
+    new PublicKey(wallet.smartWallet),
+    { limit: 10 }
+  );
+};`,
+  };
+
+  const handleCopyCode = () => {
+    navigator.clipboard.writeText(snippets[activeTab]);
+    setCopiedCode(true);
+    setTimeout(() => setCopiedCode(false), 2000);
+  };
 
   return (
     <div className="min-h-screen pb-20 relative overflow-hidden">
@@ -269,11 +359,11 @@ export default function Home() {
 
             {/* Action Console: Tabbed Forms */}
             <div className="lg:col-span-8">
-              <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-2xl shadow-black/40">
+              <div className="bg-card border border-border rounded-2xl shadow-2xl shadow-black/40 relative">
                 {/* Console Header / Tabs */}
                 <div
                   ref={tabsRef}
-                  className="relative flex items-center p-1 bg-muted/30 border-b border-border"
+                  className="relative flex items-center p-1 bg-muted/30 border-b border-border rounded-t-2xl"
                 >
                   {/* Sliding Tab Indicator */}
                   {hasInitialized && (
@@ -358,21 +448,127 @@ export default function Home() {
                   </button>
                 </div>
 
-                {/* Console Body */}
-                <div className="p-8 min-h-[400px] relative">
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={activeTab}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.2 }}
+                {/* Sub-header: Mode Selection */}
+                <div className="flex items-center justify-end px-6 py-4 bg-muted/5 border-b border-border/50">
+                  <div className="flex items-center gap-4">
+                    <span className="text-[10px] font-mono font-bold text-muted-foreground uppercase tracking-widest">
+                      View Mode:
+                    </span>
+                    <div
+                      ref={modeTabsRef}
+                      className="relative bg-muted/30 border border-border/50 rounded-full p-1 flex items-center gap-1"
                     >
-                      {activeTab === "sol" && <TransferForm />}
-                      {activeTab === "usdc" && <USDCTransferForm />}
-                      {activeTab === "sign" && <SignMessage />}
-                      {activeTab === "activity" && <ActivityLog />}
-                    </motion.div>
+                      {/* Sliding Mode Indicator */}
+                      {hasInitialized && (
+                        <motion.div
+                          className="absolute rounded-full bg-card border border-border shadow-sm"
+                          style={{
+                            top: 4,
+                            bottom: 4,
+                          }}
+                          initial={false}
+                          animate={{
+                            left: modeTabPosition.left,
+                            width: modeTabPosition.width,
+                          }}
+                          transition={{
+                            type: "spring",
+                            stiffness: 400,
+                            damping: 30,
+                          }}
+                        />
+                      )}
+
+                      <button
+                        ref={demoTabRef}
+                        type="button"
+                        onClick={() => setShowCode(false)}
+                        className={`
+                          relative z-10 px-4 py-1.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-widest flex items-center gap-2 transition-colors
+                          ${!showCode ? "text-primary" : "text-muted-foreground hover:text-foreground"}
+                        `}
+                      >
+                        <Zap className="w-3.5 h-3.5 opacity-70" />
+                        <span>Demo</span>
+                      </button>
+
+                      <button
+                        ref={codeTabRef}
+                        type="button"
+                        onClick={() => setShowCode(true)}
+                        className={`
+                          relative z-10 px-4 py-1.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-widest flex items-center gap-2 transition-colors
+                          ${showCode ? "text-primary" : "text-muted-foreground hover:text-foreground"}
+                        `}
+                      >
+                        <Code className="w-3.5 h-3.5 opacity-70" />
+                        <span>Code</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Console Body */}
+                <div className="p-8 min-h-[420px] relative overflow-hidden">
+                  <AnimatePresence mode="wait">
+                    {!showCode ? (
+                      <motion.div
+                        key={activeTab}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 20 }}
+                        transition={{ duration: 0.3, ease: "easeOut" }}
+                      >
+                        {activeTab === "sol" && <TransferForm />}
+                        {activeTab === "usdc" && <USDCTransferForm />}
+                        {activeTab === "sign" && <SignMessage />}
+                        {activeTab === "activity" && <ActivityLog />}
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="code-view"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.3, ease: "easeOut" }}
+                        className="h-full"
+                      >
+                        <div className="flex items-center justify-between mb-4">
+                          <h3 className="text-sm font-bold text-foreground font-mono uppercase tracking-widest flex items-center gap-2">
+                            <Code className="w-4 h-4 text-primary" />
+                            Implementation
+                          </h3>
+                          <button
+                            type="button"
+                            onClick={handleCopyCode}
+                            className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-muted/30 border border-border text-[10px] font-mono font-bold uppercase text-muted-foreground hover:text-foreground transition-all"
+                          >
+                            {copiedCode ? (
+                              <>
+                                <Check className="w-3 h-3 text-green-500" />
+                                Copied!
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="w-3 h-3" />
+                                Copy Code
+                              </>
+                            )}
+                          </button>
+                        </div>
+                        <div className="relative group/code">
+                          <pre className="p-6 rounded-xl bg-black/40 border border-border overflow-x-auto font-mono text-sm leading-relaxed custom-scrollbar max-h-[300px]">
+                            <code className="text-blue-400">
+                              {snippets[activeTab]}
+                            </code>
+                          </pre>
+                        </div>
+                        <p className="mt-4 text-[11px] text-muted-foreground font-mono leading-relaxed">
+                          {"//"} This is the core logic. Lazorkit handles the
+                          heavy lifting of account abstraction and sponsorship.
+                        </p>
+                      </motion.div>
+                    )}
                   </AnimatePresence>
                 </div>
 
