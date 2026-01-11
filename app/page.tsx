@@ -17,6 +17,7 @@ import {
   Activity,
   Fingerprint,
   Zap,
+  MonitorPlay,
   Bot,
   Code,
   Copy,
@@ -135,7 +136,9 @@ export default function Home() {
   }, [showCode]);
 
   const snippets: Record<TabType, string> = {
-    sol: `// Send SOL (Gasless)
+    sol: `import { useWallet } from "@lazorkit/wallet";
+import { SystemProgram, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
+
 const { signAndSendTransaction, smartWalletPubkey } = useWallet();
 
 const handleSend = async () => {
@@ -145,12 +148,17 @@ const handleSend = async () => {
     lamports: amount * LAMPORTS_PER_SOL,
   });
 
-  // Sponsored by Paymaster automatically
   const sig = await signAndSendTransaction({
     instructions: [instruction],
   });
-};`,
-    usdc: `// Send USDC (Fees paid in USDC)
+};
+
+// Usage in Component
+<button onClick={handleSend}>
+  Send Gasless SOL
+</button>`,
+    usdc: `import { useWallet } from "@lazorkit/wallet";
+
 const { signAndSendTransaction } = useWallet();
 
 const handleUSDC = async () => {
@@ -160,16 +168,29 @@ const handleUSDC = async () => {
       feeToken: "USDC", // Sponsoring gas with USDC
     },
   });
-};`,
-    sign: `// Off-chain Message Signing
+};
+
+// Usage in Component
+<button onClick={handleUSDC}>
+  Send USDC (Fee in USDC)
+</button>`,
+    sign: `import { useWallet } from "@lazorkit/wallet";
+
 const { signMessage } = useWallet();
 
 const handleSign = async () => {
   const { signature } = await signMessage(
     "Authenticating with Lazorkit"
   );
-};`,
-    activity: `// Fetch Smart Wallet History
+};
+
+// Usage in Component
+<button onClick={handleSign}>
+  Sign Message
+</button>`,
+    activity: `import { useWallet } from "@lazorkit/wallet";
+import { Connection, PublicKey } from "@solana/web3.js";
+
 const { wallet } = useWallet();
 
 const fetchHistory = async () => {
@@ -178,7 +199,12 @@ const fetchHistory = async () => {
     new PublicKey(wallet.smartWallet),
     { limit: 10 }
   );
-};`,
+};
+
+// Usage in Effect or Handler
+useEffect(() => {
+  fetchHistory();
+}, [wallet.smartWallet]);`,
   };
 
   const handleCopyCode = () => {
@@ -488,7 +514,7 @@ const fetchHistory = async () => {
                           ${!showCode ? "text-primary" : "text-muted-foreground hover:text-foreground"}
                         `}
                       >
-                        <Zap className="w-3.5 h-3.5 opacity-70" />
+                        <MonitorPlay className="w-3.5 h-3.5 opacity-70" />
                         <span>Demo</span>
                       </button>
 
@@ -563,7 +589,7 @@ const fetchHistory = async () => {
                             </code>
                           </pre>
                         </div>
-                        <p className="mt-4 text-[11px] text-muted-foreground font-mono leading-relaxed">
+                        <p className="mt-4 text-xs text-muted-foreground font-mono leading-relaxed italic opacity-70">
                           {"//"} This is the core logic. Lazorkit handles the
                           heavy lifting of account abstraction and sponsorship.
                         </p>
