@@ -1,22 +1,75 @@
+/**
+ * @fileoverview Message Signing Component
+ *
+ * This component demonstrates cryptographic message signing using
+ * Lazorkit's passkey authentication. It provides off-chain message
+ * signing capabilities for authentication and verification purposes.
+ *
+ * Key Features:
+ * - Off-chain message signing (no transaction fees)
+ * - Passkey-based cryptographic signatures
+ * - Custom message input with validation
+ * - Signature display and verification
+ * - User-friendly error handling
+ * - Real-time signing feedback
+ *
+ * Use Cases:
+ * - User authentication and identity verification
+ * - Proof of wallet ownership
+ * - Off-chain authorization for dApps
+ * - Message attestation and verification
+ *
+ * @author exyreams
+ * @version 1.0.0
+ */
+
 "use client";
 
 import { useWallet } from "@lazorkit/wallet";
 import { useState } from "react";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 
 /**
  * SignMessage Component
- * Demonstrates how to sign messages with Lazorkit passkeys.
+ *
+ * Demonstrates cryptographic message signing with Lazorkit passkeys.
+ * This component provides off-chain signing capabilities that can be used
+ * for authentication, verification, and proof of wallet ownership.
+ *
+ * The signing process uses the wallet's private key (secured by passkey)
+ * to create a cryptographic signature that can be verified by third parties.
+ *
+ * State Management:
+ * - message: Text message to be signed
+ * - signature: Generated cryptographic signature
+ * - loading: Signing process state
+ * - error: Error messages for failed signing attempts
+ *
+ * @returns JSX element containing message signing form or connection prompt
  */
 export function SignMessage() {
   const { signMessage, isConnected } = useWallet();
+
+  /** Text message to be signed */
   const [message, setMessage] = useState("");
+
+  /** Generated cryptographic signature */
   const [signature, setSignature] = useState("");
+
+  /** Signing process state */
   const [loading, setLoading] = useState(false);
+
+  /** Error message for failed signing attempts */
   const [error, setError] = useState("");
 
+  /**
+   * Handle message signing form submission
+   * Processes the message signing with passkey authentication
+   *
+   * @param e - Form submission event
+   */
   const handleSign = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -30,21 +83,21 @@ export function SignMessage() {
     setSignature("");
 
     try {
-      // Sign the message using the passkey
+      // Sign the message using the passkey-secured private key
       const result = await signMessage(message);
 
       // The result contains the signature and the signed payload
       setSignature(result.signature);
       console.log("Signed payload:", result.signedPayload);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Signing failed:", err);
-      setError(err.message || "Failed to sign message");
+      setError(err instanceof Error ? err.message : "Failed to sign message");
     } finally {
       setLoading(false);
     }
   };
 
-    if (!isConnected) {
+  if (!isConnected) {
     return (
       <Card className="flex flex-col items-center justify-center py-12 border-dashed border-2 border-border bg-muted/10">
         <div className="w-16 h-16 bg-muted/30 rounded-full flex items-center justify-center mb-4 shadow-inner border border-border">
@@ -54,6 +107,7 @@ export function SignMessage() {
             stroke="currentColor"
             viewBox="0 0 24 24"
           >
+            <title>Sign Icon</title>
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -65,7 +119,9 @@ export function SignMessage() {
         <p className="text-muted-foreground font-medium font-mono">
           Connect wallet to sign messages
         </p>
-        <p className="text-xs text-muted-foreground/50 mt-1 uppercase tracking-wider">Prove ownership securely</p>
+        <p className="text-xs text-muted-foreground/50 mt-1 uppercase tracking-wider">
+          Prove ownership securely
+        </p>
       </Card>
     );
   }
@@ -73,7 +129,9 @@ export function SignMessage() {
   return (
     <Card variant="hover">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-bold text-foreground font-mono">Sign Message</h2>
+        <h2 className="text-lg font-bold text-foreground font-mono">
+          Sign Message
+        </h2>
         <Badge variant="neutral">Off-chain</Badge>
       </div>
 
@@ -101,6 +159,7 @@ export function SignMessage() {
               viewBox="0 0 24 24"
               stroke="currentColor"
             >
+              <title>Info Icon</title>
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -130,6 +189,7 @@ export function SignMessage() {
               viewBox="0 0 24 24"
               stroke="currentColor"
             >
+              <title>Error Icon</title>
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -152,6 +212,7 @@ export function SignMessage() {
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
+                <title>Success Icon</title>
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"

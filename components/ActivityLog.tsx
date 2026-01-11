@@ -1,36 +1,104 @@
+/**
+ * @fileoverview Transaction Activity Log Component
+ *
+ * This component displays the transaction history for the connected wallet.
+ * It fetches and displays recent transactions from the Solana blockchain
+ * with detailed information and status indicators.
+ *
+ * Key Features:
+ * - Real-time transaction history fetching
+ * - Transaction status indicators (success/failed)
+ * - Time-based activity sorting
+ * - Direct links to Solana Explorer
+ * - Manual refresh functionality
+ * - Responsive transaction cards
+ * - Loading states and error handling
+ *
+ * Data Sources:
+ * - Solana RPC API for transaction signatures
+ * - Blockchain data for transaction details
+ * - Real-time status and confirmation data
+ *
+ * @author exyreams
+ * @version 1.0.0
+ */
+
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
 import { useWallet } from "@lazorkit/wallet";
 import { Connection, PublicKey } from "@solana/web3.js";
-import { Badge } from "@/components/ui/Badge";
 import {
-  ArrowUpRight,
   AlertCircle,
+  ArrowUpRight,
+  Clock,
   ExternalLink,
   Loader2,
   RefreshCw,
-  Clock,
 } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { Badge } from "@/components/ui/Badge";
 
+/**
+ * Interface for transaction activity items
+ * Represents a single transaction in the activity log
+ */
 interface ActivityItem {
+  /** Transaction signature (unique identifier) */
   signature: string;
+  /** Blockchain slot number */
   slot: number;
+  /** Error information if transaction failed */
   err: unknown;
+  /** Optional memo attached to transaction */
   memo: string | null;
+  /** Unix timestamp of when transaction was processed */
   blockTime?: number | null;
+  /** Current confirmation status */
   confirmationStatus?: string | null;
+  /** Inferred transaction type for display purposes */
   type: "send" | "receive" | "interaction" | "unknown";
 }
 
+/** Solana Devnet RPC endpoint for fetching transaction data */
 const RPC_URL = "https://api.devnet.solana.com";
 
+/**
+ * ActivityLog Component
+ *
+ * Displays transaction history for the connected wallet with real-time
+ * updates and detailed transaction information. Provides direct links
+ * to Solana Explorer for transaction verification.
+ *
+ * Features:
+ * - Fetches last 10 transactions from Solana RPC
+ * - Displays transaction status and timing
+ * - Provides manual refresh functionality
+ * - Shows loading states and error handling
+ * - Links to Solana Explorer for detailed view
+ *
+ * State Management:
+ * - activities: Array of transaction activity items
+ * - loading: Data fetching state
+ * - error: Error messages for failed requests
+ *
+ * @returns JSX element containing activity log or connection prompt
+ */
 export function ActivityLog() {
   const { wallet } = useWallet();
+
+  /** Array of transaction activity items */
   const [activities, setActivities] = useState<ActivityItem[]>([]);
+
+  /** Data fetching state */
   const [loading, setLoading] = useState(false);
+
+  /** Error message for failed requests */
   const [error, setError] = useState<string | null>(null);
 
+  /**
+   * Fetch transaction activity from Solana RPC
+   * Retrieves the last 10 transactions for the connected wallet
+   */
   const fetchActivity = useCallback(async () => {
     if (!wallet?.smartWallet) return;
 
@@ -40,10 +108,12 @@ export function ActivityLog() {
       const connection = new Connection(RPC_URL);
       const pubkey = new PublicKey(wallet.smartWallet);
 
+      // Fetch transaction signatures for the wallet
       const signatures = await connection.getSignaturesForAddress(pubkey, {
-        limit: 10,
+        limit: 10, // Get last 10 transactions
       });
 
+      // Transform signatures into activity items
       const items: ActivityItem[] = signatures.map((sig) => ({
         signature: sig.signature,
         slot: sig.slot,
@@ -51,7 +121,7 @@ export function ActivityLog() {
         memo: sig.memo,
         blockTime: sig.blockTime,
         confirmationStatus: sig.confirmationStatus,
-        type: "interaction", // Simplified type inference
+        type: "interaction", // Simplified type inference for demo
       }));
 
       setActivities(items);
@@ -63,12 +133,22 @@ export function ActivityLog() {
     }
   }, [wallet?.smartWallet]);
 
+  /**
+   * Auto-fetch activity when wallet connects
+   * Triggers initial data load when wallet becomes available
+   */
   useEffect(() => {
     if (wallet?.smartWallet) {
       fetchActivity();
     }
   }, [fetchActivity, wallet?.smartWallet]);
 
+  /**
+   * Convert Unix timestamp to human-readable time ago format
+   *
+   * @param timestamp - Unix timestamp from blockchain
+   * @returns Human-readable time string
+   */
   const getTimeAgo = (timestamp?: number | null) => {
     if (!timestamp) return "Unknown time";
     const diff = Math.floor(Date.now() / 1000 - timestamp);

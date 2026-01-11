@@ -1,29 +1,84 @@
+/**
+ * @fileoverview SOL Transfer Form Component
+ *
+ * This component demonstrates gasless SOL transfers using Lazorkit's
+ * smart wallet functionality. It provides a user-friendly interface
+ * for sending SOL transactions without requiring gas fees.
+ *
+ * Key Features:
+ * - Gasless SOL transfers using Lazorkit paymaster
+ * - Input validation for addresses and amounts
+ * - Transaction status feedback with explorer links
+ * - Error handling with user-friendly messages
+ * - Loading states during transaction processing
+ * - Automatic form reset on successful transactions
+ *
+ * @author exyreams
+ * @version 1.0.0
+ */
+
 "use client";
 
 import { useWallet } from "@lazorkit/wallet";
-import { SystemProgram, PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { LAMPORTS_PER_SOL, PublicKey, SystemProgram } from "@solana/web3.js";
 import { useState } from "react";
+import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
 
 /**
  * TransferForm Component
- * Demonstrates how to send gasless transactions with Lazorkit.
+ *
+ * Demonstrates gasless SOL transfers using Lazorkit's smart wallet.
+ * The component handles the complete transaction flow from input
+ * validation to transaction confirmation and provides real-time feedback.
+ *
+ * State Management:
+ * - recipient: Target wallet address for the transfer
+ * - amount: SOL amount to transfer (in SOL, not lamports)
+ * - loading: Transaction processing state
+ * - txSignature: Successful transaction signature
+ * - error: Error messages for failed transactions
+ *
+ * Transaction Flow:
+ * 1. Validate recipient address format
+ * 2. Convert SOL amount to lamports
+ * 3. Create SystemProgram transfer instruction
+ * 4. Sign and send via Lazorkit (gasless)
+ * 5. Display success/error feedback
+ *
+ * @returns JSX element containing transfer form or connection prompt
  */
 export function TransferForm() {
   const { signAndSendTransaction, smartWalletPubkey, isConnected } =
     useWallet();
+
+  /** Target wallet address for the transfer */
   const [recipient, setRecipient] = useState("");
+
+  /** SOL amount to transfer */
   const [amount, setAmount] = useState("");
+
+  /** Transaction processing state */
   const [loading, setLoading] = useState(false);
+
+  /** Successful transaction signature */
   const [txSignature, setTxSignature] = useState("");
+
+  /** Error message for failed transactions */
   const [error, setError] = useState("");
 
+  /**
+   * Handle SOL transfer form submission
+   * Processes the transfer with comprehensive validation and error handling
+   *
+   * @param e - Form submission event
+   */
   const handleTransfer = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Ensure wallet is connected
     if (!smartWalletPubkey) {
       setError("Wallet not connected");
       return;
@@ -34,53 +89,57 @@ export function TransferForm() {
     setTxSignature("");
 
     try {
-      // Validate recipient address
-      let recipientPubkey;
+      // Validate recipient address format
+      let recipientPubkey: PublicKey;
       try {
         recipientPubkey = new PublicKey(recipient);
       } catch {
         throw new Error("Invalid recipient address");
       }
 
-      // Convert SOL amount to lamports
+      // Convert SOL amount to lamports and validate
       const lamports = parseFloat(amount) * LAMPORTS_PER_SOL;
-      if (isNaN(lamports) || lamports <= 0) {
+      if (Number.isNaN(lamports) || lamports <= 0) {
         throw new Error("Invalid amount");
       }
 
-      // Create transfer instruction
+      // Create transfer instruction using Solana System Program
       const instruction = SystemProgram.transfer({
         fromPubkey: smartWalletPubkey,
         toPubkey: recipientPubkey,
         lamports,
       });
 
-      // Sign and send transaction (Sponsored by Paymaster)
+      // Sign and send transaction (Sponsored by Lazorkit Paymaster)
       const signature = await signAndSendTransaction({
         instructions: [instruction],
       });
 
+      // Handle successful transaction
       setTxSignature(signature);
       setRecipient("");
       setAmount("");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Transfer failed:", err);
-      setError(err.message || "Transaction failed");
+      setError(err instanceof Error ? err.message : "Transaction failed");
     } finally {
       setLoading(false);
     }
   };
 
+  // Show connection prompt when wallet is not connected
   if (!isConnected) {
     return (
       <Card className="flex flex-col items-center justify-center py-12 border-dashed border-2 border-border bg-muted/20">
         <div className="w-16 h-16 bg-muted/30 rounded-full flex items-center justify-center mb-4 shadow-inner border border-border">
+          {/* Send Icon */}
           <svg
             className="w-8 h-8 text-muted-foreground/50"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
           >
+            <title>Send Icon</title>
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -89,7 +148,9 @@ export function TransferForm() {
             />
           </svg>
         </div>
-        <p className="text-muted-foreground font-medium font-mono">Connect wallet to send SOL</p>
+        <p className="text-muted-foreground font-medium font-mono">
+          Connect wallet to send SOL
+        </p>
         <p className="text-xs text-muted-foreground/50 mt-1 uppercase tracking-wider">
           Gasless transactions available
         </p>
@@ -99,23 +160,17 @@ export function TransferForm() {
 
   return (
     <Card variant="hover" className="relative overflow-hidden group">
-      {/* Background Accent */}
-      <div className="absolute top-0 right-0 p-3 opacity-10 pointer-events-none group-hover:opacity-20 transition-opacity">
-        <svg
-          className="w-32 h-32 text-primary"
-          fill="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path d="M12 2L2 22h20L12 2zm0 4l6.5 13h-13L12 6z" />
-        </svg>
-      </div>
-
+      {/* Header Section */}
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-bold text-foreground font-mono">Send SOL</h2>
+        <h2 className="text-lg font-bold text-foreground font-mono">
+          Send SOL
+        </h2>
         <Badge variant="success">Gasless</Badge>
       </div>
 
+      {/* Transfer Form */}
       <form onSubmit={handleTransfer} className="space-y-5 relative z-10">
+        {/* Recipient Address Input */}
         <Input
           label="Recipient Address"
           placeholder="Solana address..."
@@ -124,6 +179,7 @@ export function TransferForm() {
           required
         />
 
+        {/* Amount Input with SOL suffix */}
         <Input
           label="Amount"
           placeholder="0.0"
@@ -133,16 +189,20 @@ export function TransferForm() {
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
           rightElement={
-            <span className="font-bold text-muted-foreground text-xs font-mono">SOL</span>
+            <span className="font-bold text-muted-foreground text-xs font-mono">
+              SOL
+            </span>
           }
           required
         />
 
+        {/* Submit Button */}
         <Button type="submit" isLoading={loading} className="w-full">
           {loading ? "Processing..." : "Send Transaction"}
         </Button>
       </form>
 
+      {/* Error Display */}
       {error && (
         <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg flex items-start gap-3 animate-enter">
           <div className="text-red-500 mt-0.5">
@@ -152,6 +212,7 @@ export function TransferForm() {
               viewBox="0 0 24 24"
               stroke="currentColor"
             >
+              <title>Error Icon</title>
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -164,6 +225,7 @@ export function TransferForm() {
         </div>
       )}
 
+      {/* Success Display with Explorer Link */}
       {txSignature && (
         <div className="mt-4 p-4 bg-green-500/10 border border-green-500/20 rounded-lg animate-enter">
           <div className="flex items-center gap-2 mb-1">
@@ -174,6 +236,7 @@ export function TransferForm() {
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
+                <title>Success Icon</title>
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -182,8 +245,11 @@ export function TransferForm() {
                 />
               </svg>
             </div>
-            <p className="font-semibold text-green-500 text-sm font-mono">Success!</p>
+            <p className="font-semibold text-green-500 text-sm font-mono">
+              Success!
+            </p>
           </div>
+          {/* Explorer Link */}
           <a
             href={`https://explorer.solana.com/tx/${txSignature}?cluster=devnet`}
             target="_blank"
@@ -197,6 +263,7 @@ export function TransferForm() {
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
+              <title>External Link Icon</title>
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"

@@ -1,43 +1,91 @@
+/**
+ * @fileoverview Main Landing Page Component
+ *
+ * This is the primary landing page that showcases Lazorkit's capabilities
+ * through an interactive demo interface. The page features:
+ *
+ * - Hero section with animated elements
+ * - Feature cards highlighting key benefits
+ * - Interactive demo console with tabbed interface
+ * - Real-time wallet information display
+ * - Code examples for each feature
+ * - Responsive design with smooth animations
+ *
+ * The page demonstrates core Lazorkit features:
+ * - Passkey-based authentication (biometric login)
+ * - Gasless SOL transfers
+ * - USDC transactions with fee sponsorship
+ * - Message signing capabilities
+ * - Transaction history and activity logs
+ *
+ * @author exyreams
+ * @version 1.0.0
+ */
+
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { ConnectButton } from "@/components/ConnectButton";
-import { WalletInfo } from "@/components/WalletInfo";
-import { TransferForm } from "@/components/TransferForm";
-import { USDCTransferForm } from "@/components/USDCTransferForm";
-import { SignMessage } from "@/components/SignMessage";
-import { ActivityLog } from "@/components/ActivityLog";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import {
-  Send,
-  CircleDollarSign,
-  PenTool,
   Activity,
-  Fingerprint,
-  Zap,
-  MonitorPlay,
   Bot,
+  Check,
+  CircleDollarSign,
   Code,
   Copy,
-  Check,
+  Fingerprint,
+  MonitorPlay,
+  PenTool,
+  Send,
+  Zap,
 } from "lucide-react";
-import Image from "next/image";
 import { AnimatePresence, motion } from "motion/react";
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
+import { ActivityLog } from "@/components/ActivityLog";
+import { ConnectButton } from "@/components/ConnectButton";
+import { SignMessage } from "@/components/SignMessage";
+import { TransferForm } from "@/components/TransferForm";
+import { USDCTransferForm } from "@/components/USDCTransferForm";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { WalletInfo } from "@/components/WalletInfo";
 
+/**
+ * Tab types for the interactive demo console
+ * Each tab represents a different Lazorkit feature demonstration
+ */
 type TabType = "sol" | "usdc" | "sign" | "activity";
 
+/**
+ * Home Component - Main Landing Page
+ *
+ * This component renders the complete landing page experience with:
+ * - Animated hero section
+ * - Feature showcase cards
+ * - Interactive demo console with multiple tabs
+ * - Code examples and live demonstrations
+ * - Responsive layout with smooth transitions
+ *
+ * State Management:
+ * - activeTab: Controls which demo is currently displayed
+ * - showCode: Toggles between demo view and code view
+ * - Tab positioning: Manages animated tab indicators
+ * - Copy functionality: Handles code snippet copying
+ *
+ * @returns Complete landing page JSX structure
+ */
 export default function Home() {
+  /** Current active tab in the demo console */
   const [activeTab, setActiveTab] = useState<TabType>("sol");
 
-  // Refs for sliding tab indicator
+  // Refs for sliding tab indicator animation
   const tabsRef = useRef<HTMLDivElement>(null);
   const solTabRef = useRef<HTMLButtonElement>(null);
   const usdcTabRef = useRef<HTMLButtonElement>(null);
   const signTabRef = useRef<HTMLButtonElement>(null);
   const activityTabRef = useRef<HTMLButtonElement>(null);
 
+  /** Map of tab types to their corresponding refs for easy access */
   const tabRefs = {
     sol: solTabRef,
     usdc: usdcTabRef,
@@ -49,12 +97,20 @@ export default function Home() {
   const modeTabsRef = useRef<HTMLDivElement>(null);
   const demoTabRef = useRef<HTMLButtonElement>(null);
   const codeTabRef = useRef<HTMLButtonElement>(null);
+
+  /** Position state for mode toggle indicator animation */
   const [modeTabPosition, setModeTabPosition] = useState({ left: 0, width: 0 });
 
+  /** Position state for main tab indicator animation */
   const [tabPosition, setTabPosition] = useState({ left: 0, width: 0 });
+
+  /** Flag to prevent animation glitches on initial render */
   const [hasInitialized, setHasInitialized] = useState(false);
 
-  // Initialize tab position on mount
+  /**
+   * Initialize tab position on component mount
+   * Sets up the initial position for the animated tab indicator
+   */
   useEffect(() => {
     const initializeTabPosition = () => {
       const currentTab = solTabRef.current;
@@ -75,7 +131,10 @@ export default function Home() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Update tab position when active tab changes
+  /**
+   * Update tab indicator position when active tab changes
+   * Handles smooth animation between different tabs
+   */
   useEffect(() => {
     const updateTabPosition = () => {
       const currentTab = tabRefs[activeTab]?.current;
@@ -107,11 +166,16 @@ export default function Home() {
     };
   }, [activeTab, tabRefs[activeTab]?.current]);
 
-  // Mode and Copy States
+  /** Toggle between demo view and code view */
   const [showCode, setShowCode] = useState(false);
+
+  /** State for copy button feedback */
   const [copiedCode, setCopiedCode] = useState(false);
 
-  // Update mode toggle position
+  /**
+   * Update mode toggle indicator position
+   * Handles animation for demo/code view switcher
+   */
   useEffect(() => {
     const updateModePosition = () => {
       const currentTab = showCode ? codeTabRef.current : demoTabRef.current;
@@ -135,7 +199,13 @@ export default function Home() {
     };
   }, [showCode]);
 
+  /**
+   * Code snippets for each demo tab
+   * Contains real implementation examples that developers can copy and use
+   * Each snippet demonstrates the core Lazorkit functionality for that feature
+   */
   const snippets: Record<TabType, string> = {
+    // SOL Transfer: Basic gasless Solana transfer using system program
     sol: `import { useWallet } from "@lazorkit/wallet";
 import { SystemProgram, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 
@@ -207,6 +277,10 @@ useEffect(() => {
 }, [wallet.smartWallet]);`,
   };
 
+  /**
+   * Handle copying code snippets to clipboard
+   * Provides user feedback with temporary state change
+   */
   const handleCopyCode = () => {
     navigator.clipboard.writeText(snippets[activeTab]);
     setCopiedCode(true);
@@ -418,7 +492,11 @@ useEffect(() => {
                     onClick={() => setActiveTab("sol")}
                     className={`
                       relative z-10 flex-1 flex items-center justify-center gap-2 py-3 px-4 text-xs font-mono font-bold uppercase tracking-wider transition-colors rounded-xl cursor-pointer
-                      ${activeTab === "sol" ? "text-primary" : "text-muted-foreground hover:text-foreground"}
+                      ${
+                        activeTab === "sol"
+                          ? "text-primary"
+                          : "text-muted-foreground hover:text-foreground"
+                      }
                     `}
                   >
                     <Send className="w-4 h-4 opacity-70" aria-hidden="true" />
@@ -431,7 +509,11 @@ useEffect(() => {
                     onClick={() => setActiveTab("usdc")}
                     className={`
                       relative z-10 flex-1 flex items-center justify-center gap-2 py-3 px-4 text-xs font-mono font-bold uppercase tracking-wider transition-colors rounded-xl cursor-pointer
-                      ${activeTab === "usdc" ? "text-primary" : "text-muted-foreground hover:text-foreground"}
+                      ${
+                        activeTab === "usdc"
+                          ? "text-primary"
+                          : "text-muted-foreground hover:text-foreground"
+                      }
                     `}
                   >
                     <CircleDollarSign
@@ -447,7 +529,11 @@ useEffect(() => {
                     onClick={() => setActiveTab("sign")}
                     className={`
                       relative z-10 flex-1 flex items-center justify-center gap-2 py-3 px-4 text-xs font-mono font-bold uppercase tracking-wider transition-colors rounded-xl cursor-pointer
-                      ${activeTab === "sign" ? "text-primary" : "text-muted-foreground hover:text-foreground"}
+                      ${
+                        activeTab === "sign"
+                          ? "text-primary"
+                          : "text-muted-foreground hover:text-foreground"
+                      }
                     `}
                   >
                     <PenTool
@@ -463,7 +549,11 @@ useEffect(() => {
                     onClick={() => setActiveTab("activity")}
                     className={`
                       relative z-10 flex-1 flex items-center justify-center gap-2 py-3 px-4 text-xs font-mono font-bold uppercase tracking-wider transition-colors rounded-xl cursor-pointer
-                      ${activeTab === "activity" ? "text-primary" : "text-muted-foreground hover:text-foreground"}
+                      ${
+                        activeTab === "activity"
+                          ? "text-primary"
+                          : "text-muted-foreground hover:text-foreground"
+                      }
                     `}
                   >
                     <Activity
@@ -511,7 +601,11 @@ useEffect(() => {
                         onClick={() => setShowCode(false)}
                         className={`
                           relative z-10 px-4 py-1.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-widest flex items-center gap-2 transition-colors
-                          ${!showCode ? "text-primary" : "text-muted-foreground hover:text-foreground"}
+                          ${
+                            !showCode
+                              ? "text-primary"
+                              : "text-muted-foreground hover:text-foreground"
+                          }
                         `}
                       >
                         <MonitorPlay className="w-3.5 h-3.5 opacity-70" />
@@ -524,7 +618,11 @@ useEffect(() => {
                         onClick={() => setShowCode(true)}
                         className={`
                           relative z-10 px-4 py-1.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-widest flex items-center gap-2 transition-colors
-                          ${showCode ? "text-primary" : "text-muted-foreground hover:text-foreground"}
+                          ${
+                            showCode
+                              ? "text-primary"
+                              : "text-muted-foreground hover:text-foreground"
+                          }
                         `}
                       >
                         <Code className="w-3.5 h-3.5 opacity-70" />
