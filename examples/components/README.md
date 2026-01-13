@@ -2,9 +2,106 @@
 
 Complete React components with UI patterns and best practices for Lazorkit integration.
 
+## Installation
+
+```bash
+bun add @lazorkit/wallet @solana/web3.js @coral-xyz/anchor buffer
+bun add -D tailwindcss postcss autoprefixer vite-plugin-node-polyfills
+```
+
+## Configuration
+
+### next.config.ts
+
+```typescript
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  webpack: (config) => {
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      buffer: require.resolve("buffer"),
+    };
+    return config;
+  },
+};
+
+export default nextConfig;
+```
+
+### app/providers.tsx
+
+```typescript
+"use client";
+
+import { LazorkitProvider } from "@lazorkit/wallet";
+import { ReactNode } from "react";
+
+// Polyfill Buffer for client-side usage
+if (typeof window !== "undefined") {
+  window.Buffer = window.Buffer || require("buffer").Buffer;
+}
+
+// Configuration for Solana Devnet
+const CONFIG = {
+  RPC_URL: "https://api.devnet.solana.com",
+  PORTAL_URL: "https://portal.lazor.sh",
+  PAYMASTER: {
+    paymasterUrl: "https://kora.devnet.lazorkit.com",
+  },
+};
+
+interface ProvidersProps {
+  children: ReactNode;
+}
+
+export function Providers({ children }: ProvidersProps) {
+  return (
+    <LazorkitProvider
+      rpcUrl={CONFIG.RPC_URL}
+      portalUrl={CONFIG.PORTAL_URL}
+      paymasterConfig={CONFIG.PAYMASTER}
+    >
+      {children}
+    </LazorkitProvider>
+  );
+}
+```
+
+### Tailwind CSS Setup
+
+```bash
+bunx tailwindcss init -p
+```
+
+Update `tailwind.config.js`:
+
+```javascript
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+};
+```
+
+Add to `app/globals.css`:
+
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
 ## Prerequisites
 
-- All previous examples completed
+- Next.js project with above configuration
 - Tailwind CSS for styling (optional, can be adapted to any CSS framework)
 
 ## Complete Components

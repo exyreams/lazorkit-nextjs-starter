@@ -2,11 +2,77 @@
 
 Complete implementation of gasless transactions including SOL transfers, USDC transfers, and message signing.
 
+## Installation
+
+```bash
+bun add @lazorkit/wallet @solana/web3.js @coral-xyz/anchor buffer
+bun add -D vite-plugin-node-polyfills
+```
+
+## Configuration
+
+### next.config.ts
+
+```typescript
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  webpack: (config) => {
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      buffer: require.resolve("buffer"),
+    };
+    return config;
+  },
+};
+
+export default nextConfig;
+```
+
+### app/providers.tsx
+
+```typescript
+"use client";
+
+import { LazorkitProvider } from "@lazorkit/wallet";
+import { ReactNode } from "react";
+
+// Polyfill Buffer for client-side usage
+if (typeof window !== "undefined") {
+  window.Buffer = window.Buffer || require("buffer").Buffer;
+}
+
+// Configuration for Solana Devnet
+const CONFIG = {
+  RPC_URL: "https://api.devnet.solana.com",
+  PORTAL_URL: "https://portal.lazor.sh",
+  PAYMASTER: {
+    paymasterUrl: "https://kora.devnet.lazorkit.com",
+  },
+};
+
+interface ProvidersProps {
+  children: ReactNode;
+}
+
+export function Providers({ children }: ProvidersProps) {
+  return (
+    <LazorkitProvider
+      rpcUrl={CONFIG.RPC_URL}
+      portalUrl={CONFIG.PORTAL_URL}
+      paymasterConfig={CONFIG.PAYMASTER}
+    >
+      {children}
+    </LazorkitProvider>
+  );
+}
+```
+
 ## Prerequisites
 
-- Authentication setup completed (see [Authentication Example](../authentication/))
 - Connected wallet with Lazorkit
 - Test SOL from [Solana Faucet](https://faucet.solana.com) for Devnet
+- Next.js project with above configuration
 
 ## Components
 
