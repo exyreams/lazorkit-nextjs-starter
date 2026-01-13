@@ -14,38 +14,12 @@ A complete Solana wallet app featuring:
 - **Smart Wallets** - Programmable accounts with recovery support
 - **Message Signing** - Verify ownership without transactions
 - **Session Persistence** - Stay logged in across page refreshes
-- **Real-time Balance** - SOL balance with refresh functionality
-- **Modern UI** - Responsive design with Tailwind CSS
-- **TypeScript** - Fully typed for better developer experience
-- **Comprehensive Docs** - Extensive comments and step-by-step tutorials
 
 ## Prerequisites
 
 - Node.js 18+ installed
 - Modern browser with WebAuthn support (Chrome, Safari, Firefox, Edge)
 - Basic knowledge of React/Next.js (helpful but not required)
-
-## Project Structure
-
-```
-lazorkit-nextjs-starter/
-├── app/
-│   ├── layout.tsx          # Root layout with providers
-│   ├── page.tsx            # Main dashboard page
-│   ├── providers.tsx       # Lazorkit provider configuration
-│   └── globals.css         # Global styles and themes
-├── components/
-│   ├── ConnectButton.tsx   # Wallet connection component
-│   ├── WalletInfo.tsx      # Wallet details and balance
-│   ├── TransferForm.tsx    # SOL transfer form
-│   ├── USDCTransferForm.tsx # USDC transfer form
-│   ├── SignMessage.tsx     # Message signing component
-│   ├── ActivityLog.tsx     # Transaction history
-│   └── ui/                 # Reusable UI components
-├── docs/                   # Step-by-step tutorials
-├── public/                 # Static assets and icons
-└── README.md              # Project overview
-```
 
 ## Step 1: Clone and Install (2 minutes)
 
@@ -56,11 +30,11 @@ cd lazorkit-nextjs-starter
 
 # Install dependencies
 bun install
-# or npm install
+# or bun install
 
 # Start development server
 bun dev
-# or npm run dev
+# or bun run dev
 ```
 
 Open http://localhost:3000 in your browser
@@ -95,53 +69,6 @@ You should see ~2 SOL in your wallet balance.
 6. **Success!** View your transaction on Solana Explorer
 
 **Note:** Transaction signing requires HTTPS. For full functionality, deploy to production (see Step 6).
-
-## Key Features Demo
-
-### Passkey Authentication
-
-```typescript
-import { useWallet } from "@lazorkit/wallet";
-
-function ConnectButton() {
-  const { connect, isConnected, wallet } = useWallet();
-
-  return (
-    <button onClick={() => connect()}>
-      {isConnected ? `Connected: ${wallet?.smartWallet}` : "Connect"}
-    </button>
-  );
-}
-```
-
-### Gasless SOL Transfer
-
-```typescript
-const { signAndSendTransaction, smartWalletPubkey } = useWallet();
-
-const sendSOL = async () => {
-  const instruction = SystemProgram.transfer({
-    fromPubkey: smartWalletPubkey,
-    toPubkey: new PublicKey(recipient),
-    lamports: 0.1 * LAMPORTS_PER_SOL,
-  });
-
-  const signature = await signAndSendTransaction({
-    instructions: [instruction],
-  });
-};
-```
-
-### Message Signing
-
-```typescript
-const { signMessage } = useWallet();
-
-const sign = async () => {
-  const result = await signMessage("Hello Lazorkit!");
-  console.log("Signature:", result.signature);
-};
-```
 
 ## Step 5: Try Other Features (2 minutes)
 
@@ -190,17 +117,11 @@ For full transaction functionality, deploy to HTTPS:
 
 ```bash
 # Build the app
-npm run build
+bun run build
 
 # Deploy to Netlify
 netlify deploy --prod
 ```
-
-**Quick Deploy Options:**
-
-- [Deploy to Vercel](https://vercel.com) (recommended)
-- [Deploy to Netlify](https://netlify.com)
-- Any HTTPS-enabled hosting
 
 ## Configuration
 
@@ -218,56 +139,24 @@ const CONFIG = {
 };
 ```
 
-## Understanding What You Built
+## Learn More
 
-### The Tech Stack
-
-- **Next.js 15** - React framework with App Router
-- **Lazorkit SDK** - Passkey authentication and smart wallets
-- **Solana Web3.js** - Blockchain interactions
-- **Tailwind CSS** - Styling and responsive design
-- **TypeScript** - Type safety and better DX
-
-### Key Components
-
-- **`ConnectButton`** - Handles wallet connection/disconnection
-- **`WalletInfo`** - Displays wallet details and balance
-- **`TransferForm`** - Gasless SOL transaction form
-- **`USDCTransferForm`** - Token transfer with USDC fee payment
-- **`SignMessage`** - Message signing for verification
-- **`ActivityLog`** - Transaction history display
-
-### How Passkeys Work
-
-1. **No Private Keys** - Your device's secure enclave handles cryptography
-2. **Biometric Auth** - Use fingerprint, face, or device PIN
-3. **Smart Wallets** - Programmable Solana accounts controlled by passkeys
-4. **Session Persistence** - Stay logged in across browser sessions
-
-## Next Steps
-
-### Learn More
+### Detailed Tutorials
 
 - **[Passkey Authentication Tutorial](./docs/passkey-authentication.md)** - Deep dive into how passkeys work
 - **[Gasless Transactions Tutorial](./docs/gasless-transactions.md)** - Understanding the Paymaster system
+
+### Code Examples
+
+- **[Examples Directory](./examples/)** - Working code examples with Next.js configuration
+  - [Basic Setup](./examples/basic-setup/) - Minimal Lazorkit integration
+  - [Authentication](./examples/authentication/) - Complete passkey auth flow
+  - [Transactions](./examples/transactions/) - Gasless SOL/USDC transfers
+  - [Components](./examples/components/) - Reusable React components
+
+### External Resources
+
 - **[Lazorkit Documentation](https://docs.lazorkit.com)** - Full SDK reference
-
-### Customize Your App
-
-- **Change Styling** - Modify Tailwind classes or `app/globals.css`
-- **Add Features** - Check Lazorkit docs for advanced capabilities
-- **Switch Networks** - Update `app/providers.tsx` for Mainnet
-- **Brand Integration** - Replace logos and colors with your brand
-
-### Build Something Amazing
-
-This starter is your foundation. Consider building:
-
-- **E-commerce checkout** with Solana payments
-- **DeFi interface** for token swaps
-- **NFT marketplace** with gasless minting
-- **DAO voting** system
-- **Subscription service** with automated billing
 
 ## Troubleshooting
 
@@ -287,10 +176,6 @@ Use a modern browser (Chrome, Safari, Firefox, Edge) and ensure you're on HTTPS 
 
 Allow popups for your domain in browser settings.
 
-### "Connection works but can't sign"
-
-Make sure you're testing on HTTPS (deployed version) for transaction signing.
-
 ## FAQ
 
 **Q: Why do transactions fail on localhost?**
@@ -308,21 +193,8 @@ A: Nowhere! Passkeys use your device's secure enclave. No keys to lose or steal.
 **Q: Is this production-ready?**
 A: Yes! This uses the official Lazorkit SDK. Add your features and deploy.
 
-**Q: How secure are passkeys?**
-A: Very secure. Private keys never leave your device's secure enclave.
-
-**Q: Can users recover their wallets?**
-A: Yes, Lazorkit supports account recovery through multiple passkeys.
-
-**Q: What's the cost of gasless transactions?**
-A: The Paymaster sponsors gas fees. Check Lazorkit pricing for production usage.
-
-**Q: Can I use this on mobile?**
-A: Yes! Passkeys work on mobile browsers with biometric authentication.
-
 ## Need Help?
 
-- **[Full Documentation](./README.md)** - Complete feature reference
 - **[Telegram Community](https://t.me/lazorkit)** - Get help from the community
 - **[GitHub Issues](https://github.com/exyreams/lazorkit-nextjs-starter/issues)** - Report bugs or request features
 - **[Lazorkit Docs](https://docs.lazorkit.com)** - Official SDK documentation
@@ -331,4 +203,4 @@ A: Yes! Passkeys work on mobile browsers with biometric authentication.
 
 **Congratulations!** You've built a complete Solana app with passkey authentication and gasless transactions.
 
-**What's next?** Customize it, add features, and build something amazing with Lazorkit!
+**What's next?** Check out the [examples directory](./examples/) for detailed code implementations and customize it for your needs!
